@@ -15,7 +15,7 @@ const updateLeaderboardChannel = async () => {
   const leaderboardChannelId = await storage.getItem("leaderboardChannelId");
   if (leaderboardChannelId === undefined) return;
   const leaderboardChannel = client.channels.get(leaderboardChannelId);
-  const lastMessage = (await leaderboardChannel.fetchMessages({ limit: 1})).array()[0];
+  const lastMessage = (await leaderboardChannel.fetchMessages({ limit: 1 })).array()[0];
 
   if (lastMessage.author.id === client.user.id) {
     lastMessage.edit(await getLeaderboard());
@@ -44,6 +44,7 @@ client.on("message", async (message) => {
     message.channel.send(`Leaderboards channel has been set to <#${channelId}> with ID ${channelId}.`);
     await storage.init();
     await storage.setItem("leaderboardChannelId", channelId);
+    await updateLeaderboardChannel();
   }
 });
 
