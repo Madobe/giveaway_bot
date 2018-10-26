@@ -1,0 +1,21 @@
+{
+  "name": "giveaway_bot",
+  "version": "1.0.0",
+  "description": "Warframe Giveaway server bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-madobe:Madobe/giveaway_bot.git"
+  },
+  "author": "Madobe",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "googleapis": "^27.0.0",
+    "node-persist": "^3.0.1",
+    "promise": "^8.0.2"
+  }
+}
