@@ -7,7 +7,7 @@ const gsheet = new GSheets();
 
 const getLeaderboard = async () => {
   const rows = await gsheet.getValues("14t9-54udr_eqaCgq9g1rWhPLHY_E-RxfdhKTXxgCERc", "A2:B11");
-  return rows.map((row, i) => `${i + 1}. ${row[0]} - ${row[1]}p`).join("\n");
+  return rows.map((row, i) => `${i + 1}. **${row[0]}** - ${row[1]}p`).join("\n");
 };
 
 const updateLeaderboardChannel = async () => {
