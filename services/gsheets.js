@@ -2,7 +2,7 @@ const Promise = require("promise");
 const { google } = require("googleapis");
 const credentials = require("../credentials");
 
-const scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
+const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
 
 class GSheets {
 
@@ -47,6 +47,26 @@ class GSheets {
       }, (err, res) => {
         if (err) reject(err);
         return resolve(res.data.values);
+      });
+    });
+  }
+
+  async insertRow(spreadsheetId, cellRange, values) {
+    const resource = { values };
+    await this.authorize();
+    const sheets = google.sheets({version: "v4"});
+    return new Promise((resolve, reject) => {
+      sheets.spreadsheets.values.append({
+        spreadsheetId: spreadsheetId,
+        range: cellRange,
+        valueInputOption: "RAW",
+        insertDataOption: "OVERWRITE",
+        resource: resource
+      }, (err, result) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
       });
     });
   }
