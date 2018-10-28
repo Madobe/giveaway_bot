@@ -38,7 +38,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 
   await gsheet.insertRow(
     "1xFBhGMz-H-7uuZfHi4ZdvWWZrzEHywA4AaVvRCEsYYc",
-    "A2",
+    "A2:O999",
     rows
   );
 
