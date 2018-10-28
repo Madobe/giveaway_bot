@@ -1,6 +1,7 @@
 # Project specific
 credentials.json
 .node-persist/
+.vscode/
 
 # Mac
 *.swp

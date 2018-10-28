@@ -54,7 +54,7 @@ const init = async () => {
     }
   });
 
-  client.login("NTA1ODI3MDc4MTc2ODk5MDk0.DrZQMg.H7_dSJLYtFEEhO6UZqCEpUFYx9w");
+  client.login(process.env.DISCORD_TOKEN);
 };
 
 init();
