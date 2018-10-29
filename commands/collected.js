@@ -15,7 +15,33 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 
   const date = moment.utc().format("YYYY-MM-DD HH:mm:ss");
   const items = donationDetails[2].split(/\s*,\s*/);
-  const rows = items.map(item => {
+
+  // Take all Prime items and turn them into individual entries
+  // ie. 3 Ember Prime => Ember Prime, Ember Prime, Ember Prime
+  let splitItems = [];
+  for(let i = 0; i < items.length; i++) {
+    let itemNameParts = items[i].split(" ");
+    const lcItemName = items[i].toLowerCase();
+
+    if(!isNaN(itemNameParts[0]) && (lcItemName.endsWith("prime") || lcItemName.endsWith("primes"))) {
+      // Remove the "s" on the end if it's "primes"
+      if(lcItemName.endsWith("primes")) {
+        const index = itemNameParts.length - 1;
+        itemNameParts[index] = itemNameParts[index].slice(0, -1);
+      }
+
+      const times = parseInt(itemNameParts[0]);
+      itemNameParts.shift();
+
+      for(let a = 0; a < times; a++) {
+        splitItems.push(itemNameParts.join(" "));
+      }
+    } else {
+      splitItems.push(items[i]);
+    }
+  }
+
+  const rows = splitItems.map(item => {
     return [
       date, // Timestamp
       null, // Switch
@@ -41,6 +67,19 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
     "A2:O999",
     rows
   );
+
+  // If they're anonymous, add here too
+  if(donationDetails[3] === "Y") {
+    let anonRows = [];
+    for(let i = 0; i < splitItems.length; i++) {
+      anonRows.push([donationDetails[6]]);
+    }
+    await gsheet.insertRow(
+      "1RpyLPCw-qIIuRvqV5kmZxzqbyT0qA8rDIKlCziQsNBs",
+      "ANON NAMES!A1",
+      anonRows
+    );
+  }
 
   message.channel.send("Spreadsheet updated.");
 };

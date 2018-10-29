@@ -12,7 +12,7 @@ client.commands = {};
  * @param {GuildMember} member The user attempting to run a command.
  */
 const isModerator = (member) => {
-  return member.roles.get("367116941153927170") !== undefined;
+  return member.roles.get("506311827341443072") !== undefined;
 };
 
 // We assume that we're only running on ONE SERVER
