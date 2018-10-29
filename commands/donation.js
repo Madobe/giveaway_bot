@@ -40,7 +40,8 @@ If you would not like to add a restriction, just type \`none\`.`,
   const donationNotificationChannel = client.channels.get(donationNotificationChannelId);
   donationNotificationChannel.send(
     `New donation received.
-\`\`\`ID: ${donationId}
+\`\`\`Discord Tag: ${userResponses[6]}
+ID: ${donationId}
 IGN: ${userResponses[0]} ${userResponses[3] === "Y" ? "(anonymous)" : ""}
 Platform: ${userResponses[1]}
 Items: ${userResponses[2]}
