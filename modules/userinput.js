@@ -15,7 +15,6 @@ const getUserInput = async (message) => {
  * Ask question > wait for answer > update variables > return
  * @param {Message} message Represents a message sent by a user.
  * @param {string} question The question being asked.
- * @param {Array<string>} userResponses An array of all the values currently gathered from the user.
  */
 const getSingleInput = async (message, question) => {
   message.channel.send(question);
