@@ -19,7 +19,7 @@ If you would not like to add a restriction, just type \`none\`.`,
 
   let userResponses = [];
   for(let i = 0; i < questions.length; i++) {
-    userResponses.push(await userInput.getSingleInput(message, questions[i], userResponses));
+    userResponses.push(await userInput.getSingleInput(message, questions[i]));
   }
 
   userResponses[1] = userResponses[1].toUpperCase(); // Platform
