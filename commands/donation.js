@@ -20,7 +20,7 @@ If you would not like to add a restriction, just type \`none\`.`,
   let userResponses = [];
   for(let i = 0; i < questions.length; i++) {
     const response = await userInput.getSingleInput(message, questions[i]);
-    if(response === "cancel") return;
+    if(response.toLowerCase() === "cancel") return;
     userResponses.push(response);
   }
 
