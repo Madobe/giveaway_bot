@@ -36,15 +36,17 @@ const processIGNs = async (message) => {
 };
 
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
-  const row = message.content.split("|")[0].split(" ")[1];
-  const tags = collectDiscordTags(message);
-  const igns = processIGNs(message);
+  const row = parseInt(message.content.split("|")[0].split(" ")[1]) + 1;
+  const tags = await collectDiscordTags(message);
+  const igns = await processIGNs(message);
 
   gsheet.updateRow(
     "1xFBhGMz-H-7uuZfHi4ZdvWWZrzEHywA4AaVvRCEsYYc",
     `M${row}:N${row}`,
-    [tags, igns]
+    [[tags.join("\n"), igns.join("\n")]]
   );
+
+  message.channel.send("Winners have been updated on the spreadsheet.");
 };
 
 exports.conf = {
