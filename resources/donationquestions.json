@@ -1,0 +1,8 @@
+[
+  "Please note that you can type `cancel` at any time during this process to cancel your donation.\n\nWhat is your in-game name (IGN)?",
+  "What platform are you on?",
+  "What items would you like to donate? Please separate them with commas.",
+  "Would you like to remain anonymous? Y/N",
+  "Should there be any restrictions placed on who can win the items you have donated? You can set it to the following or a custom restriction:\nBeginner - Up to 100h in-game time.\nNovice - Less than 250h in-game time.\nUnowned - The winner must not already have a copy of this item.\nUnmastered - The winner must have not already mastered the item being donated.\nIf you would not like to add a restriction, just type `none`.",
+  "Are there any notes you would like to add? (Type N if no.)"
+]
