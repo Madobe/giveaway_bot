@@ -51,6 +51,12 @@ class GSheets {
     });
   }
 
+  /**
+   * Inserts a row into a Google Spreadsheet.
+   * @param {string} spreadsheetId The ID of the spreadsheet to insert a row into.
+   * @param {string} cellRange The A1 notation for which cells to insert under.
+   * @param {Array<Array<string>>} values A two-depth array of the values to insert.
+   */
   async insertRow(spreadsheetId, cellRange, values) {
     const resource = { values };
     await this.authorize();
@@ -63,9 +69,30 @@ class GSheets {
         insertDataOption: "OVERWRITE",
         resource: resource
       }, (err, result) => {
-        if (err) {
-          reject(err);
-        }
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
+
+  /**
+   * Updates a row on a Google Spreadsheet.
+   * @param {string} spreadsheetId The ID of the spreadsheet to update a row of.
+   * @param {string} cellRange The A1 notation for which cells to update.
+   * @param {Array<Array<string>>} values A two-depth array of the new values.
+   */
+  async updateRow(spreadsheetId, cellRange, values) {
+    const resource = { values };
+    await this.authorize();
+    const sheets = google.sheets({version: "v4"});
+    return new Promise((resolve, reject) => {
+      sheets.spreadsheets.values.update({
+        spreadsheetId: spreadsheetId,
+        range: cellRange,
+        valueInputOption: "RAW",
+        resource
+      }, (err, result) => {
+        if(err) reject(err);
         resolve(result);
       });
     });
