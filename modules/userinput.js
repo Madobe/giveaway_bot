@@ -12,7 +12,7 @@ const getUserInput = async (message) => {
 };
 
 /**
- * Ask question > wait for answer > update variables > return
+ * Send question and get the input.
  * @param {Message} message Represents a message sent by a user.
  * @param {string} question The question being asked.
  */
