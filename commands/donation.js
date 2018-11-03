@@ -80,13 +80,13 @@ const sendNotification = async (client, message, responses, id, args) => {
   if (donationNotificationChannel === undefined) return message.channel.send(`No notification channel set. New donation created under ID "${id}"`);
   return donationNotificationChannel.send(
     `New donation received.
-\`\`\`Discord Tag: ${responses[6]}
+\`\`\`Discord Tag: ${responses.tag}
 ID: ${id}
-IGN: ${responses[0]} ${responses[3] === "Y" ? "(anonymous)" : ""}
-Platform: ${responses[1]}
-Items: ${responses[2]}
-Restrictions: ${responses[4]}
-Additional Notes: ${responses[5]}\`\`\``
+IGN: ${responses.ign} ${responses.anonymous ? "(anonymous)" : ""}
+Platform: ${responses.platform}
+Items: ${responses.items}
+Restrictions: ${responses.restrictions}
+Additional Notes: ${responses.notes}\`\`\``
   );
 };
 
