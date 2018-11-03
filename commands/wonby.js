@@ -36,7 +36,7 @@ const processIGNs = async (message) => {
 };
 
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
-  const row = parseInt(message.content.split("|")[0].split(" ")[1]) + 1;
+  const row = message.content.split("|")[0].split(" ")[1];
   const tags = await collectDiscordTags(message);
   const igns = await processIGNs(message);
 
