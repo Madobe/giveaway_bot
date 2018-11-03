@@ -2,6 +2,7 @@
 const chai = require("chai");
 chai.use(require("chai-string"));
 const expect = chai.expect;
+const command = require("../../commands/collected");
 const units = require("../../commands/collected").units;
 
 describe("collected", () => {

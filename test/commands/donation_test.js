@@ -2,6 +2,7 @@
 const chai = require("chai");
 chai.use(require("chai-string"));
 const expect = chai.expect;
+const command = require("../../commands/donation");
 const units = require("../../commands/donation").units;
 
 const storage = require("node-persist");
