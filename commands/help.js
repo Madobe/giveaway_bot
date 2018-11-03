@@ -1,5 +1,5 @@
-exports.run = async (client, message, args) => {
-  message.channel.send(`\`\`\`
+exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
+  return message.channel.send(`\`\`\`
 !collected - Writes to the spreadsheet. Only use when items have been claimed.
 !donation - Make a donation.
 !donationnotificationchannel - Where to put the notification that somebody did !donation.
