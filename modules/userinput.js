@@ -17,6 +17,7 @@ const getUserInput = async (message) => {
  * @param {string} question The question being asked.
  */
 const getSingleInput = async (message, question) => {
+  if(typeof(question) === "object") question = question.join("\n");
   message.channel.send(question);
   return await getUserInput(message);
 };
