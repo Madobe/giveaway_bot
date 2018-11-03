@@ -104,7 +104,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
       "", // Plat value (Estimated)
       details.platform, // Platform
       details.restrictions, // Restrictions
-      details.anonymous === "Y" ? "anonymous" : details.tag, // Donated By
+      details.anonymous ? "anonymous" : details.tag, // Donated By
       message.author.tag, // Held By
       "", // Won By
       "", // Won By (IGN)
