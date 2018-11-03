@@ -6,7 +6,8 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 !help - You're reading it.
 !invite - Link to invite the bot. Not available.
 !leaderchannel - Which channel gets the auto-updating leaderboards.
-!top - See the current top donators.\`\`\``);
+!top - See the current top donators.
+!wonby - Set winners. (!wonby row | tags | igns)\`\`\``);
 };
 
 exports.conf = {
