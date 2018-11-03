@@ -80,7 +80,7 @@ describe("donation", () => {
       channel: { send: (m) => { return m; } },
       author: { tag: "Nanamin#1103" }
     };
-    const args = { storageOpts: ".temp/storage" };
+    const args = { storageOpts: { dir: ".temp/storage" } };
 
     const ign = "Merleawe";
     const platform = "PC";
@@ -102,7 +102,7 @@ describe("donation", () => {
     });
 
     it("returns the correct ID", async () => {
-      const id = await units.saveDonation(message, args, details);
+      const id = await units.saveDonation(message, details, args);
 
       const list = await storage.getItem("donationsList");
       const savedId = Object.keys(list)[0];
@@ -111,7 +111,7 @@ describe("donation", () => {
     });
 
     it("saves correctly", async () => {
-      const id = await units.saveDonation(message, args, details);
+      const id = await units.saveDonation(message, details, args);
 
       const list = await storage.getItem("donationsList");
       const saved = list[id];
