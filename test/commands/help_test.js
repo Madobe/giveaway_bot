@@ -5,12 +5,12 @@ const expect = chai.expect;
 const command = require("../../commands/help");
 
 describe("help", () => {
-  const client = {};
   const message = { channel: { send: (text) => { return text; } } };
 
   describe("#run", () => {
     it("should return a string surrounded by ```", async () => {
-      const helpText = await command.run(client, message, {});
+      const helpText = await command.run({}, message, {});
+
       expect(helpText).to.be.a("string");
       expect(helpText).to.startsWith("```");
       expect(helpText).to.endsWith("```");
