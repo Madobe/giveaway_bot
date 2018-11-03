@@ -13,6 +13,7 @@ const getDonation = async (list, id) => {
   if(id === undefined || id === "") {
     return Object.keys(list).sort((a, b) => b - a)[0];
   }
+  console.log(id);
   return id;
 };
 
@@ -78,34 +79,18 @@ const processItems = async (items) => {
   return splitItems;
 };
 
-/**
- * Gets a donation entry and turns it from an array into a hash for readability.
- * @param {Object} donation The donation entry that we're tidying up.
- */
-const tidyDetails = async (donation) => {
-  return {
-    ign: donation[0],
-    platform: donation[1],
-    items: donation[2],
-    anonymous: donation[3],
-    restrictions: donation[4],
-    notes: donation[5],
-    tag: donation[6]
-  };
-};
-
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
-  let donationId = message.content.split(" ")[1];
+  let id = message.content.split(" ")[1];
 
-  await storage.init(args.storageOpts);
-  let donationsList = await storage.getItem("donationsList");
+  const storageOpts = args === undefined ? {} : args.storageOpts;
+  await storage.init(storageOpts);
+  let list = await storage.getItem("donationsList");
 
-  donationId = getDonation(donationsList, donationId);
-  const details = tidyDetails(donationsList[donationId]);
+  const details = list[await getDonation(list, id)];
 
   const date = moment.utc().format("YYYY-MM-DD HH:mm:ss");
   const items = details.items.split(/\s*,\s*/);
-  const splitItems = processItems(items);
+  const splitItems = await processItems(items);
 
   const rows = splitItems.map(item => {
     return [
@@ -162,6 +147,5 @@ exports.units = {
   isPrime: isPrime,
   isPlural: isPlural,
   singularize: singularize,
-  processItems: processItems,
-  tidyDetails: tidyDetails
+  processItems: processItems
 };

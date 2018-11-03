@@ -43,8 +43,9 @@ const tidyResponses = async (message, responses) => {
  * @param {Object} responses The responses in a hash.
  * @return {Number} The ID of the donation that was saved.
  */
-const saveDonation = async (message, args, responses) => {
-  await storage.init(args.storageOpts);
+const saveDonation = async (message, responses, args) => {
+  const storageOpts = args === undefined ? {} : args.storageOpts;
+  await storage.init(storageOpts);
   let list = await storage.getItem("donationsList") || {};
   const id = Date.now();
   list[id] = responses;
@@ -72,8 +73,8 @@ Submitter: ${responses.tag}
  * @param {Number} id The ID for the donation entry.
  */
 const sendNotification = async (client, message, responses, id, args) => {
-  // Post that a new donation has been made in the donation notification channel
-  await storage.init(args.storageOpts);
+  const storageOpts = args === undefined ? {} : args.storageOpts;
+  await storage.init(storageOpts);
   const donationNotificationChannelId = await storage.getItem("donationNotificationChannelId");
   const donationNotificationChannel = client.channels.get(donationNotificationChannelId);
   if (donationNotificationChannel === undefined) return message.channel.send(`No notification channel set. New donation created under ID "${id}"`);
@@ -92,10 +93,10 @@ Additional Notes: ${responses[5]}\`\`\``
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
   const _responses = await getResponses(message);
   if(_responses === "cancel") return;
-  const responses = await tidyResponses(_responses);
+  const responses = await tidyResponses(message, _responses);
 
-  const id = await saveDonation(message, args, responses);
-  await sendNotification(client, message, responses, id);
+  const id = await saveDonation(message, responses, args);
+  sendNotification(client, message, responses, id);
 };
 
 exports.conf = {

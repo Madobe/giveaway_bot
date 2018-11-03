@@ -18,7 +18,8 @@ const generate = async () => {
  * sends a new one instead of editing.
  */
 const updateChannel = async (client, args) => {
-  await storage.init(args.storageOpts);
+  const storageOpts = args === undefined ? {} : args.storageOpts;
+  await storage.init(storageOpts);
   const leaderboardChannelId = await storage.getItem("leaderboardChannelId");
   const leaderboardChannel = client.channels.get(leaderboardChannelId);
   if(leaderboardChannel === undefined) return;
