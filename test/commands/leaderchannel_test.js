@@ -7,7 +7,7 @@ const command = require("../../commands/leaderchannel");
 
 const storage = require("node-persist");
 
-describe("donationresponses", () => {
+describe("leaderchannel", () => {
   describe("#run", () => {
     const message = {
       channel: {
