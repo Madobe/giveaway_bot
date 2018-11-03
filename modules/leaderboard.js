@@ -17,8 +17,8 @@ const generate = async () => {
  * represent the current leaders. If the last message is not from the bot, it 
  * sends a new one instead of editing.
  */
-const updateChannel = async (client) => {
-  await storage.init();
+const updateChannel = async (client, args) => {
+  await storage.init(args.storageOpts);
   const leaderboardChannelId = await storage.getItem("leaderboardChannelId");
   const leaderboardChannel = client.channels.get(leaderboardChannelId);
   if(leaderboardChannel === undefined) return;
