@@ -152,4 +152,10 @@ describe("collected", () => {
     it("assigns notes", () => expect(details.notes).to.equal(notes));
     it("assigns tag", () => expect(details.tag).to.equal(tag));
   });
+
+  describe("#conf", () => {
+    it("requires the user to be a moderator", () => {
+      expect(command.conf.permissionLevel).to.equal("Moderator");
+    });
+  });
 });

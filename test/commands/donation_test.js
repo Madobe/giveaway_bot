@@ -168,4 +168,10 @@ describe("donation", () => {
       expect(result).to.startWith("New donation received");
     });
   });
+
+  describe("#conf", () => {
+    it("should be available to all users", () => {
+      expect(command.conf.permissionLevel).to.equal("none");
+    });
+  });
 });
