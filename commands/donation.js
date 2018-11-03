@@ -71,12 +71,13 @@ Submitter: ${responses.tag}
  * @param {Object} responses An object representing a donation entry.
  * @param {Number} id The ID for the donation entry.
  */
-const sendNotification = async (client, message, responses, id) => {
+const sendNotification = async (client, message, responses, id, args) => {
   // Post that a new donation has been made in the donation notification channel
+  await storage.init(args.storageOpts);
   const donationNotificationChannelId = await storage.getItem("donationNotificationChannelId");
   const donationNotificationChannel = client.channels.get(donationNotificationChannelId);
   if (donationNotificationChannel === undefined) return message.channel.send(`No notification channel set. New donation created under ID "${id}"`);
-  donationNotificationChannel.send(
+  return donationNotificationChannel.send(
     `New donation received.
 \`\`\`Discord Tag: ${responses[6]}
 ID: ${id}
