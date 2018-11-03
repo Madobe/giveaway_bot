@@ -120,7 +120,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
   );
 
   // If they're anonymous, add here too
-  if(details.anonymous === "Y") {
+  if(details.anonymous) {
     let anonRows = [];
     for(let i = 0; i < splitItems.length; i++) {
       anonRows.push([details.tag]);
