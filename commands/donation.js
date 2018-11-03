@@ -13,7 +13,7 @@ const getResponses = async (message) => {
 
   for(let i = 0; i < questions.length; i++) {
     const response = await userInput.getSingleInput(message, questions[i]);
-    if(response.toLowerCase() === "cancel") return "cancel";
+    if(response.toLowerCase() === "cancel") return message.channel.send("Donation process canceled.");
     responses.push(response);
   }
 

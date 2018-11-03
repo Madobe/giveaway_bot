@@ -40,14 +40,14 @@ describe("donation", () => {
               }
             };
           },
-          send: async () => { return; }
+          send: async (m) => { return m; }
         }
       };
 
       const responses = await units.getResponses(message);
 
       console.log(responses);
-      expect(responses).to.equal("cancel");
+      expect(responses).to.equal("Donation process canceled.");
     });
   });
 
