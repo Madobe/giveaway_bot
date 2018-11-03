@@ -129,31 +129,6 @@ describe("collected", () => {
     });
   });
 
-  describe("tidyDetails", () => {
-    const ign = "Merleawe";
-    const platform = "PC";
-    const items = "2 Ivara Prime, 1 Rhino Prime, 10 Memeing Strike";
-    const anonymous = "Y";
-    const restrictions = "Beginner";
-    const notes = "Iz onli gem, y u hev 2 b med?";
-    const tag = "Nanamin#1103";
-    let details;
-
-    before(async () => {
-      const donation = [ign, platform, items, anonymous, restrictions, notes, tag];
-
-      details = await units.tidyDetails(donation);
-    });
-
-    it("assigns ign", () => { expect(details.ign).to.equal(ign); });
-    it("assigns platform", () => { expect (details.platform).to.equal(platform); });
-    it("assigns items", () => { expect(details.items).to.equal(items); });
-    it("assigns anonymous", () => { expect(details.anonymous).to.equal(anonymous); });
-    it("assigns restrictions", () => { expect(details.restrictions).to.equal(restrictions); });
-    it("assigns notes", () => expect(details.notes).to.equal(notes));
-    it("assigns tag", () => expect(details.tag).to.equal(tag));
-  });
-
   describe("#conf", () => {
     it("requires the user to be a moderator", () => {
       expect(command.conf.permissionLevel).to.equal("Moderator");
