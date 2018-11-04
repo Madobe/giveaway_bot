@@ -122,7 +122,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
   });
 
   await gsheet.insertRow(
-    "1xFBhGMz-H-7uuZfHi4ZdvWWZrzEHywA4AaVvRCEsYYc",
+    process.env.TRACKER_SPREADSHEET_ID,
     "A2:R999",
     rows
   );
@@ -134,7 +134,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
       anonRows.push([details.tag]);
     }
     await gsheet.insertRow(
-      "1RpyLPCw-qIIuRvqV5kmZxzqbyT0qA8rDIKlCziQsNBs",
+      process.env.ANON_SPREADSHEET_ID,
       "ANON NAMES!A1",
       anonRows
     );

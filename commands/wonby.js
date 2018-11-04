@@ -51,7 +51,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
   const igns = await processIGNs(message);
 
   gsheet.updateRow(
-    "1xFBhGMz-H-7uuZfHi4ZdvWWZrzEHywA4AaVvRCEsYYc",
+    process.env.TRACKER_SPREADSHEET_ID,
     `N${row}:P${row}`,
     [[tags.join("\n"), ids.join("\n"), igns.join("\n")]]
   );
