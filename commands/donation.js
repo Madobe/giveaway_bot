@@ -32,7 +32,8 @@ const tidyResponses = async (message, responses) => {
     anonymous: responses[3].toUpperCase() === "Y",
     restrictions: responses[4].toLowerCase() === "none" ? "" : responses[4],
     notes: responses[5].toUpperCase() === "N" ? "" : responses[5],
-    tag: message.author.tag
+    tag: message.author.tag,
+    userId: message.author.id
   };
 };
 
@@ -59,7 +60,7 @@ Items: ${responses.items}
 Anonymous? ${responses.anonymous ? "Yes" : "No" }
 Restrictions: ${responses.restrictions}
 Notes: ${responses.notes}
-Submitter: ${responses.tag}
+Submitter: ${responses.tag} (ID:${responses.userId})
 \`\`\``);
 
   return id;
@@ -80,7 +81,7 @@ const sendNotification = async (client, message, responses, id, args) => {
   if (donationNotificationChannel === undefined) return message.channel.send(`No notification channel set. New donation created under ID "${id}"`);
   return donationNotificationChannel.send(
     `New donation received.
-\`\`\`Discord Tag: ${responses.tag}
+\`\`\`Discord Tag: ${responses.tag} (ID:${responses.userId})
 ID: ${id}
 IGN: ${responses.ign} ${responses.anonymous ? "(anonymous)" : ""}
 Platform: ${responses.platform}

@@ -25,6 +25,15 @@ const collectDiscordTags = async (message) => {
 };
 
 /**
+ * Gathers all Discord IDs for anybody that had a tag given.
+ * @param {Collection<Snowflake, User>} users A Discord.js Collection of User objects indexed by Snowflakes.
+ * @param {Array<string>} tags The Discord tags of the winners.
+ */
+const collectDiscordIds = async (users, tags) => {
+  return tags.map(tag => users.find(user => user.tag === tag).id);
+};
+
+/**
  * Gathers and splits all the IGNs in the message.
  * @param {Message} message A Discord.js Message object.
  * @return {Array<string>} An array of IGNs.
@@ -38,12 +47,13 @@ const processIGNs = async (message) => {
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
   const row = message.content.split("|")[0].split(" ")[1];
   const tags = await collectDiscordTags(message);
+  const ids = await collectDiscordIds(client.users, tags);
   const igns = await processIGNs(message);
 
   gsheet.updateRow(
     "1xFBhGMz-H-7uuZfHi4ZdvWWZrzEHywA4AaVvRCEsYYc",
-    `M${row}:N${row}`,
-    [[tags.join("\n"), igns.join("\n")]]
+    `N${row}:P${row}`,
+    [[tags.join("\n"), ids.join("\n"), igns.join("\n")]]
   );
 
   message.channel.send("Winners have been updated on the spreadsheet.");
@@ -55,5 +65,6 @@ exports.conf = {
 
 exports.units = {
   collectDiscordTags: collectDiscordTags,
+  collectDiscordIds: collectDiscordIds,
   processIGNs: processIGNs
 };

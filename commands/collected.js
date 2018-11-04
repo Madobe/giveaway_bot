@@ -82,16 +82,22 @@ const processItems = async (items) => {
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
   let id = message.content.split(" ")[1];
 
-  const storageOpts = args === undefined ? {} : args.storageOpts;
+  const storageOpts = args instanceof Array ? {} : args.storageOpts;
   await storage.init(storageOpts);
   let list = await storage.getItem("donationsList");
 
-  const details = list[await getDonation(list, id)];
+  let details;
+  try {
+    details = list[await getDonation(list, id)];
+  } catch(err) {
+    return message.channel.send("No donations have been made yet.");
+  }
 
   const date = moment.utc().format("YYYY-MM-DD HH:mm:ss");
   const items = details.items.split(/\s*,\s*/);
   const splitItems = await processItems(items);
 
+  const userId = details.userId || client.users.find("tag", details.tag).id;
   const rows = splitItems.map(item => {
     return [
       date, // Timestamp
@@ -105,8 +111,10 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
       details.platform, // Platform
       details.restrictions, // Restrictions
       details.anonymous ? "anonymous" : details.tag, // Donated By
+      userId, // Donated By (Discord ID)
       message.author.tag, // Held By
       "", // Won By
+      "", // Won By (Discord ID)
       "", // Won By (IGN)
       details.notes, // Donor Notes
       message.content.split(" ").slice(2).join(" ") // Staff Notes
@@ -115,7 +123,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 
   await gsheet.insertRow(
     "1xFBhGMz-H-7uuZfHi4ZdvWWZrzEHywA4AaVvRCEsYYc",
-    "A2:O999",
+    "A2:R999",
     rows
   );
 
