@@ -112,6 +112,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
       details.restrictions, // Restrictions
       details.anonymous ? "anonymous" : details.tag, // Donated By
       userId, // Donated By (Discord ID)
+      details.ign, // Donated By (IGN)
       message.author.tag, // Held By
       "", // Won By
       "", // Won By (Discord ID)

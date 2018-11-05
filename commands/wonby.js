@@ -52,7 +52,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 
   gsheet.updateRow(
     process.env.TRACKER_SPREADSHEET_ID,
-    `N${row}:P${row}`,
+    `O${row}:Q${row}`,
     [[tags.join("\n"), ids.join("\n"), igns.join("\n")]]
   );
 
