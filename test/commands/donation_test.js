@@ -61,9 +61,9 @@ describe("donation", () => {
     const message = { author: { tag: "Nanamin#1103" } };
     let details;
 
-    before(async () => {
+    before(() => {
       const responses = [ign, platform, items, anonymous, restrictions, notes];
-      details = await units.tidyResponses(message, responses);
+      details = units.tidyResponses(message, responses);
     });
 
     it("assigns ign", () => { expect(details.ign).to.equal(ign); });
@@ -94,7 +94,7 @@ describe("donation", () => {
       await storage.init(args.storageOpts);
 
       const responses = [ign, platform, items, anonymous, restrictions, notes];
-      details = await units.tidyResponses(message, responses);
+      details = units.tidyResponses(message, responses);
     });
 
     afterEach(async () => {
@@ -146,7 +146,7 @@ describe("donation", () => {
       await storage.init(args.storageOpts);
 
       const responses = [ign, platform, items, anonymous, restrictions, notes];
-      details = await units.tidyResponses(message, responses);
+      details = units.tidyResponses(message, responses);
     });
 
     after(async () => {

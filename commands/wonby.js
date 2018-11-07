@@ -7,7 +7,7 @@ const gsheet = new GSheets();
  * @param {Message} message A Discord.js Message object.
  * @return {Array<string>} An array of Discord tags.
  */
-const collectDiscordTags = async (message) => {
+const collectDiscordTags = (message) => {
   const text = message.content.split("|")[1];
   const mentions =  message.mentions.users.map((user) => user.tag);
   const tags = text.split(" ");
@@ -29,7 +29,7 @@ const collectDiscordTags = async (message) => {
  * @param {Collection<Snowflake, User>} users A Discord.js Collection of User objects indexed by Snowflakes.
  * @param {Array<string>} tags The Discord tags of the winners.
  */
-const collectDiscordIds = async (users, tags) => {
+const collectDiscordIds = (users, tags) => {
   return tags.map(tag => users.find(user => user.tag === tag).id);
 };
 
@@ -38,7 +38,7 @@ const collectDiscordIds = async (users, tags) => {
  * @param {Message} message A Discord.js Message object.
  * @return {Array<string>} An array of IGNs.
  */
-const processIGNs = async (message) => {
+const processIGNs = (message) => {
   const igns = message.content.split("|")[2];
   const splitIGNs = igns.split(/\s*,\s*/g).map(ign => ign.trim());
   return splitIGNs;
@@ -46,9 +46,9 @@ const processIGNs = async (message) => {
 
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
   const row = message.content.split("|")[0].split(" ")[1];
-  const tags = await collectDiscordTags(message);
-  const ids = await collectDiscordIds(client.users, tags);
-  const igns = await processIGNs(message);
+  const tags = collectDiscordTags(message);
+  const ids = collectDiscordIds(client.users, tags);
+  const igns = processIGNs(message);
 
   gsheet.updateRow(
     process.env.TRACKER_SPREADSHEET_ID,

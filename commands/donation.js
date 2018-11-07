@@ -24,7 +24,7 @@ const getResponses = async (message) => {
  * Takes the donation responses and assign to to keys on a hash and format them.
  * @param {Array<string>} responses An array of the responses to the donation questions.
  */
-const tidyResponses = async (message, responses) => {
+const tidyResponses = (message, responses) => {
   return {
     ign: responses[0],
     platform: responses[1].toUpperCase(),
@@ -94,7 +94,7 @@ Additional Notes: ${responses.notes}\`\`\``
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
   const _responses = await getResponses(message);
   if(_responses === "cancel") return;
-  const responses = await tidyResponses(message, _responses);
+  const responses = tidyResponses(message, _responses);
 
   const id = await saveDonation(message, responses, args);
   sendNotification(client, message, responses, id);

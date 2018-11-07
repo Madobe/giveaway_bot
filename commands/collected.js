@@ -9,7 +9,7 @@ const gsheet = new GSheets();
  * @param {Object} list A hash with donation details organized via the time they were created.
  * @param {string} id A string representing a key from list.
  */
-const getDonation = async (list, id) => {
+const getDonation = (list, id) => {
   if(id === undefined || id === "") {
     return Object.keys(list).sort((a, b) => b - a)[0];
   }
@@ -21,7 +21,7 @@ const getDonation = async (list, id) => {
  * Checks an item to see if it's Prime and has a number in front.
  * @param {string} item The item name we're checking.
  */
-const isPrime = async (item) => {
+const isPrime = (item) => {
   item = item.toLowerCase();
 
   if(!isNaN(item[0]) && (item.endsWith("prime") || item.endsWith("primes"))) {
@@ -35,7 +35,7 @@ const isPrime = async (item) => {
  * Checks to see if the item name is plural. Specifically, if it's the word "primes".
  * @param {string} item The item name we're checking.
  */
-const isPlural = async (item) => {
+const isPlural = (item) => {
   return item.toLowerCase().endsWith("primes");
 };
 
@@ -69,14 +69,16 @@ const processItems = async (items) => {
   let splitItems = [];
 
   for(let i = 0; i < items.length; i++) {
-    if(await isPrime(items[i])) {
-      splitItems = splitItems.concat(await singularize(items[i]));
+    if(isPrime(items[i])) {
+      splitItems = splitItems.concat(singularize(items[i]));
     } else {
       splitItems.push(items[i]);
     }
   }
 
-  return splitItems;
+  let promisedArray = await Promise.all(splitItems);
+  promisedArray = [].concat(...promisedArray);
+  return promisedArray;
 };
 
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
@@ -88,7 +90,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 
   let details;
   try {
-    details = list[await getDonation(list, id)];
+    details = list[getDonation(list, id)];
   } catch(err) {
     return message.channel.send("No donations have been made yet.");
   }
