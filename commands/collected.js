@@ -149,7 +149,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 };
 
 exports.conf = {
-  permissionLevel: "Moderator"
+  permissionLevel: "Giveaway"
 };
 
 // Exported specifically for unit testing

@@ -15,6 +15,14 @@ const isModerator = (member) => {
   return member.roles.get("506311827341443072") !== undefined;
 };
 
+/**
+ * Checks if the given user has the giveaway staff role (by ID).
+ * @param {GuildMember} member The user attempting to run a command.
+ */
+const isGiveawayStaff = (member) => {
+  return member.roles.get("487093541147901953") !== undefined;
+};
+
 // We assume that we're only running on ONE SERVER
 client.on("ready", async () => {
   await leaderboard.updateChannel(client);
@@ -31,7 +39,8 @@ client.on("message", async (message) => {
     const command = client.commands[commandName];
     if(command) {
       if(command.conf.permissionLevel === "none" ||
-         command.conf.permissionLevel === "Moderator" && isModerator(message.member)) {
+         command.conf.permissionLevel === "Moderator" && isModerator(message.member) ||
+         command.conf.permissionLevel === "Giveaway" && isGiveawayStaff(message.member)) {
         command.run(client, message, args);
       } else {
         message.channel.send("You do not have the necessary permissions to use this command.");
