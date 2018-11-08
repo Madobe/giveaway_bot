@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: commands/donation.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: commands/donation.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const storage = require("node-persist");
+
+const userInput = require("../modules/userinput");
+const questions = require("../resources/donationquestions.json");
+
+/**
+ * Get responses to all the donation questions.
+ * @param {Message} message A Discord.js Message object.
+ * @return {Array&lt;string>} An array representing the user's responses to the questions.
+ */
+const getResponses = async (message) => {
+  let responses = [];
+
+  for(let i = 0; i &lt; questions.length; i++) {
+    const response = await userInput.getSingleInput(message, questions[i]);
+    if(response.toLowerCase() === "cancel") return message.channel.send("Donation process canceled.");
+    responses.push(response);
+  }
+
+  return responses;
+};
+
+/**
+ * Takes the donation responses and assign to to keys on a hash and format them.
+ * @param {Array&lt;string>} responses An array of the responses to the donation questions.
+ */
+const tidyResponses = (message, responses) => {
+  return {
+    ign: responses[0],
+    platform: responses[1].toUpperCase(),
+    items: responses[2],
+    anonymous: responses[3].toUpperCase() === "Y",
+    restrictions: responses[4].toLowerCase() === "none" ? "" : responses[4],
+    notes: responses[5].toUpperCase() === "N" ? "" : responses[5],
+    tag: message.author.tag,
+    userId: message.author.id
+  };
+};
+
+/**
+ * Persists the donation entry using node-persist.
+ * @param {Message} message A Discord.js Message object.
+ * @param {*} args Can be either a hash or array of arguments. Hash if it came from somewhere within the app.
+ * @param {Object} responses The responses in a hash.
+ * @return {Number} The ID of the donation that was saved.
+ */
+const saveDonation = async (message, responses, args) => {
+  const storageOpts = args === undefined ? {} : args.storageOpts;
+  await storage.init(storageOpts);
+  let list = await storage.getItem("donationsList") || {};
+  const id = Date.now();
+  list[id] = responses;
+  await storage.setItem("donationsList", list);
+
+  message.channel.send(`Donation logged with these responses:
+\`\`\`
+IGN: ${responses.ign}
+Platform: ${responses.platform}
+Items: ${responses.items}
+Anonymous? ${responses.anonymous ? "Yes" : "No" }
+Restrictions: ${responses.restrictions}
+Notes: ${responses.notes}
+Submitter: ${responses.tag} (ID:${responses.userId})
+\`\`\``);
+
+  return id;
+};
+
+/**
+ * 
+ * @param {Client} client A Discord.js Client object.
+ * @param {Message} message A Discord.js Message object.
+ * @param {Object} responses An object representing a donation entry.
+ * @param {Number} id The ID for the donation entry.
+ */
+const sendNotification = async (client, message, responses, id, args) => {
+  const storageOpts = args === undefined ? {} : args.storageOpts;
+  await storage.init(storageOpts);
+  const donationNotificationChannelId = await storage.getItem("donationNotificationChannelId");
+  const donationNotificationChannel = client.channels.get(donationNotificationChannelId);
+  if (donationNotificationChannel === undefined) return message.channel.send(`No notification channel set. New donation created under ID "${id}"`);
+  return donationNotificationChannel.send(
+    `New donation received.
+\`\`\`Discord Tag: ${responses.tag} (ID:${responses.userId})
+ID: ${id}
+IGN: ${responses.ign} ${responses.anonymous ? "(anonymous)" : ""}
+Platform: ${responses.platform}
+Items: ${responses.items}
+Restrictions: ${responses.restrictions}
+Additional Notes: ${responses.notes}\`\`\``
+  );
+};
+
+exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
+  const _responses = await getResponses(message);
+  if(_responses === "cancel") return;
+  const responses = tidyResponses(message, _responses);
+
+  const id = await saveDonation(message, responses, args);
+  sendNotification(client, message, responses, id);
+};
+
+exports.conf = {
+  permissionLevel: "none"
+};
+
+exports.units = {
+  getResponses: getResponses,
+  tidyResponses: tidyResponses,
+  saveDonation: saveDonation,
+  sendNotification: sendNotification
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#collectDiscordIds">collectDiscordIds</a></li><li><a href="global.html#collectDiscordTags">collectDiscordTags</a></li><li><a href="global.html#generate">generate</a></li><li><a href="global.html#getDonation">getDonation</a></li><li><a href="global.html#getResponses">getResponses</a></li><li><a href="global.html#getSingleInput">getSingleInput</a></li><li><a href="global.html#getUserInput">getUserInput</a></li><li><a href="global.html#isGiveawayStaff">isGiveawayStaff</a></li><li><a href="global.html#isModerator">isModerator</a></li><li><a href="global.html#isPlural">isPlural</a></li><li><a href="global.html#isPrime">isPrime</a></li><li><a href="global.html#processIGNs">processIGNs</a></li><li><a href="global.html#processItems">processItems</a></li><li><a href="global.html#saveDonation">saveDonation</a></li><li><a href="global.html#sendNotification">sendNotification</a></li><li><a href="global.html#singularize">singularize</a></li><li><a href="global.html#tidyResponses">tidyResponses</a></li><li><a href="global.html#updateChannel">updateChannel</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Nov 07 2018 18:06:04 GMT-0700 (MST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
