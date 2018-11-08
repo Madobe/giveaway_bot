@@ -2,6 +2,7 @@
 This bot is provided publicly for anybody that wishes to use it. GNU so no hiding things. The original version may be viewed on the Discord server.
 
 Discord server: https://discord.gg/kdCnsnJ
+
 Author: Nanamin#1103
 
 # Setup
