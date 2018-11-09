@@ -113,8 +113,8 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
       details.platform, // Platform
       details.restrictions, // Restrictions
       details.anonymous ? "anonymous" : details.tag, // Donated By
-      userId, // Donated By (Discord ID)
-      details.ign, // Donated By (IGN)
+      details.anonymous ? "anonymous" : userId, // Donated By (Discord ID)
+      details.anonymous ? "anonymous" : details.ign, // Donated By (IGN)
       message.author.tag, // Held By
       "", // Won By
       "", // Won By (Discord ID)
@@ -134,11 +134,15 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
   if(details.anonymous) {
     let anonRows = [];
     for(let i = 0; i < splitItems.length; i++) {
-      anonRows.push([details.tag]);
+      anonRows.push([
+        details.tag,
+        details.userId,
+        details.ign
+      ]);
     }
     await gsheet.insertRow(
       process.env.ANON_SPREADSHEET_ID,
-      "ANON NAMES!A1",
+      "ANON NAMES!A1:C999",
       anonRows
     );
   }
