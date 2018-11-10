@@ -30,11 +30,33 @@ const tidyResponses = (message, responses) => {
     platform: responses[1].toUpperCase(),
     items: responses[2],
     anonymous: responses[3].toUpperCase() === "Y",
-    restrictions: responses[4].toLowerCase() === "none" ? "" : responses[4],
+    restrictions: responses[4].toLowerCase() === "none" ? "" : expandRestrictions(responses[4]),
     notes: responses[5].toUpperCase() === "N" ? "" : responses[5],
     tag: message.author.tag,
     userId: message.author.id
   };
+};
+
+/**
+ * Takes the restrictions and expand keywords to include descriptions as well as split
+ * @param {string} response The user's inputted response for what restrictions are on the donation.
+ */
+const expandRestrictions = (response) => {
+  const expansions = {
+    "beginner": "Beginner - Up to 100h in-game time.",
+    "novice": "Novice - Less than 250h in-game time.",
+    "unowned": "Unowned - The winner must not already have a copy of this item.",
+    "unmastered": "Unmastered - The winner must have not already mastered the item being donated.",
+  };
+
+  const restrictions = response.split("|");
+
+  let expanded = [];
+  for(let i = 0; i < restrictions.length; i++) {
+    const restriction = restrictions[i].toLowerCase().trim();
+    expanded.push(expansions[restriction] || restrictions[i].trim());
+  }
+  return expanded.join("\n");
 };
 
 /**
@@ -107,6 +129,7 @@ exports.conf = {
 exports.units = {
   getResponses: getResponses,
   tidyResponses: tidyResponses,
+  expandRestrictions: expandRestrictions,
   saveDonation: saveDonation,
   sendNotification: sendNotification
 };

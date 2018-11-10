@@ -57,6 +57,7 @@ describe("donation", () => {
     const items = "2 Ivara Prime, 1 Rhino Prime, 10 Memeing Strike";
     const anonymous = "Y";
     const restrictions = "Beginner";
+    const longRestriction = "Beginner - Up to 100h in-game time.";
     const notes = "Iz onli gem, y u hev 2 b med?";
     const message = { author: { tag: "Nanamin#1103" } };
     let details;
@@ -70,9 +71,29 @@ describe("donation", () => {
     it("assigns platform", () => { expect(details.platform).to.equal(platform); });
     it("assigns items", () => { expect(details.items).to.equal(items); });
     it("assigns anonymous", () => { expect(details.anonymous).to.equal(true); });
-    it("assigns restrictions", () => { expect(details.restrictions).to.equal(restrictions); });
+    it("assigns restrictions", () => { expect(details.restrictions).to.equal(longRestriction); });
     it("assigns notes", () => { expect(details.notes).to.equal(notes); });
     it("assigns tag", () => { expect(details.tag).to.equal(message.author.tag); });
+  });
+
+  describe("expandRestrictions", () => {
+    it("expands a single restriction properly", () => {
+      const response = units.expandRestrictions("Beginner");
+
+      expect(response).to.equal("Beginner - Up to 100h in-game time.");
+    });
+
+    it("expands multiple restrictions properly", () => {
+      const response = units.expandRestrictions("Beginner | Unowned");
+
+      expect(response).to.equal("Beginner - Up to 100h in-game time.\nUnowned - The winner must not already have a copy of this item.");
+    });
+
+    it("lets custom restrictions through without modification", () => {
+      const response = units.expandRestrictions("Beginner | The winner can't be Cthulhu.");
+
+      expect(response).to.equal("Beginner - Up to 100h in-game time.\nThe winner can't be Cthulhu.");
+    });
   });
 
   describe("#saveDonation", () => {
@@ -87,6 +108,7 @@ describe("donation", () => {
     const items = "2 Ivara Prime, 1 Rhino Prime, 10 Memeing Strike";
     const anonymous = "Y";
     const restrictions = "Beginner";
+    const longRestriction = "Beginner - Up to 100h in-game time.";
     const notes = "Iz onli gem, y u hev 2 b med?";
     let details;
 
@@ -120,7 +142,7 @@ describe("donation", () => {
       expect(saved.platform).to.equal(platform);
       expect(saved.items).to.equal(items);
       expect(saved.anonymous).to.equal(true);
-      expect(saved.restrictions).to.equal(restrictions);
+      expect(saved.restrictions).to.equal(longRestriction);
       expect(saved.notes).to.equal(notes);
       expect(saved.tag).to.equal(message.author.tag);
     });

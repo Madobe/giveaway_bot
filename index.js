@@ -12,7 +12,7 @@ client.commands = {};
  * @param {GuildMember} member The user attempting to run a command.
  */
 const isModerator = (member) => {
-  return member.roles.get("506311827341443072") !== undefined;
+  return member.roles.get(process.env.MODERATOR_ROLE) !== undefined;
 };
 
 /**
@@ -20,7 +20,7 @@ const isModerator = (member) => {
  * @param {GuildMember} member The user attempting to run a command.
  */
 const isGiveawayStaff = (member) => {
-  return member.roles.get("487093541147901953") !== undefined;
+  return member.roles.get(process.env.GIVEAWAY_ROLE) !== undefined;
 };
 
 // We assume that we're only running on ONE SERVER
