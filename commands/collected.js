@@ -1,5 +1,5 @@
 const storage = require("node-persist");
-const moment = require("moment");
+const format = require("date-fns/format");
 
 const GSheets = require("../services/gsheets");
 const gsheet = new GSheets();
@@ -95,7 +95,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
     return message.channel.send("No donations have been made yet.");
   }
 
-  const date = moment.utc().format("YYYY-MM-DD HH:mm:ss");
+  const date = format(new Date(), "YYYY-MM-DD HH:mm:ss");
   const items = details.items.split(/\s*,\s*/);
   const splitItems = await processItems(items);
 
