@@ -1,13 +1,32 @@
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
   return message.channel.send(`\`\`\`
-!collected - Writes to the spreadsheet. Only use when items have been claimed.
+Variables that have ? at the end are optional.
+Time for any function that uses it is in the form "#[s/m/h/d]" (eg. "30s"). No quotation marks.
+
 !donation - Make a donation.
-!donationnotificationchannel - Where to put the notification that somebody did !donation.
+  !donation
 !help - You're reading it.
+  !help
 !invite - Link to invite the bot. Not available.
-!leaderchannel - Which channel gets the auto-updating leaderboards.
+  !invite
+!remind - Sends the message given back to the channel after the time has elapsed.
+  !remind time message
 !top - See the current top donators.
-!wonby - Set winners. (!wonby row | tags | igns)\`\`\``);
+  !top
+
+Staff only:
+!collected - Writes to the spreadsheet. Only use when items have been claimed.
+  !collected id?
+!disqualified - Adds the Disqualified role to the mentioned user for the specified length of time.
+  !disqualified user time
+!donationresponses - Where to put the notification that somebody did !donation.
+  !donationnotificationchannel channelId
+!leaderchannel - Which channel gets the auto-updating leaderboards.
+  !leaderchannel channelId
+!role - Returns the ID of the given role.
+  !role roleName
+!wonby - Set winners on the spreadsheet.
+  !wonby row | tags | igns\`\`\``);
 };
 
 exports.conf = {
