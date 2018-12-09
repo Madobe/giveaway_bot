@@ -6,32 +6,9 @@
 const storage = require("node-persist");
 const addSeconds = require("date-fns/add_seconds");
 
-/**
- * Sends the given text to the given channel.
- * @param {Client} client Discord.js Client object.
- * @param {string} channelId The ID of the channel we send the message in.
- * @param {string} text The message to send.
- */
-const message = async (client, channelId, text) => {
-  const channel = client.channels.get(channelId);
-
-  channel.send(text);
-};
-
-/**
- * Removes the given role from the given member.
- * @param {Client} client Discord.js Client object.
- * @param {string} guildId The ID of the guild the member to remove the role from is in.
- * @param {string} memberId The ID of the member to remove the role from.
- * @param {string} roleId The ID of the role to remove.
- */
-const removeRole = async (client, guildId, memberId, roleId) => {
-  const guild = client.guilds.get(guildId);
-  const member = guild.members.get(memberId);
-
-  member.removeRole(roleId)
-    .catch(console.error);
-};
+const message = require("./timer_actions/message");
+const removeRole = require("./timer_actions/removerole");
+const cleanChannel = require("./timer_actions/cleanchannel");
 
 /**
  * Reads initial timer data from the storage. Only used if the bot reboots.
@@ -55,6 +32,9 @@ const initTimers = async (client) => {
         break;
       case "removeRole":
         removeRole(client, timer.guildId, timer.memberId, timer.roleId);
+        break;
+      case "cleanChannel":
+        cleanChannel(client, timer.channelId, timer.ignoreIds);
         break;
       default:
         return;

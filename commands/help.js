@@ -15,6 +15,8 @@ Time for any function that uses it is in the form "#[s/m/h/d]" (eg. "30s"). No q
   !top
 
 Staff only:
+!cleanchannel - Cleans the channel every time the interval passes. Also does an initial clean. Ignores any messages with the given IDs.
+  !cleanchannel channelId interval messageIdsToIgnore
 !collected - Writes to the spreadsheet. Only use when items have been claimed.
   !collected id?
 !disqualified - Adds the Disqualified role to the mentioned user for the specified length of time.
