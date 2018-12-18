@@ -21,7 +21,7 @@ describe("donation", () => {
 
       const responses = await units.getResponses(message);
 
-      expect(responses.length).to.equal(6);
+      expect(responses.length).to.equal(7);
     });
 
     it("cancels any time", async () => {
@@ -56,6 +56,7 @@ describe("donation", () => {
     const platform = "PC";
     const items = "2 Ivara Prime, 1 Rhino Prime, 10 Memeing Strike";
     const anonymous = "Y";
+    const availability = "Any time after 12 every day UTC";
     const restrictions = "Beginner";
     const longRestriction = "Beginner - Up to 100h in-game time.";
     const notes = "Iz onli gem, y u hev 2 b med?";
@@ -63,7 +64,7 @@ describe("donation", () => {
     let details;
 
     before(() => {
-      const responses = [ign, platform, items, anonymous, restrictions, notes];
+      const responses = [ign, platform, items, anonymous, availability, restrictions, notes];
       details = units.tidyResponses(message, responses);
     });
 
@@ -71,6 +72,7 @@ describe("donation", () => {
     it("assigns platform", () => { expect(details.platform).to.equal(platform); });
     it("assigns items", () => { expect(details.items).to.equal(items); });
     it("assigns anonymous", () => { expect(details.anonymous).to.equal(true); });
+    it("assigns availability", () => { expect(details.availability).to.equal(availability); });
     it("assigns restrictions", () => { expect(details.restrictions).to.equal(longRestriction); });
     it("assigns notes", () => { expect(details.notes).to.equal(notes); });
     it("assigns tag", () => { expect(details.tag).to.equal(message.author.tag); });
@@ -107,6 +109,7 @@ describe("donation", () => {
     const platform = "PC";
     const items = "2 Ivara Prime, 1 Rhino Prime, 10 Memeing Strike";
     const anonymous = "Y";
+    const availability = "Any time after 12 every day UTC";
     const restrictions = "Beginner";
     const longRestriction = "Beginner - Up to 100h in-game time.";
     const notes = "Iz onli gem, y u hev 2 b med?";
@@ -115,7 +118,7 @@ describe("donation", () => {
     beforeEach(async () => {
       await storage.init(args.storageOpts);
 
-      const responses = [ign, platform, items, anonymous, restrictions, notes];
+      const responses = [ign, platform, items, anonymous, availability, restrictions, notes];
       details = units.tidyResponses(message, responses);
     });
 
@@ -142,6 +145,7 @@ describe("donation", () => {
       expect(saved.platform).to.equal(platform);
       expect(saved.items).to.equal(items);
       expect(saved.anonymous).to.equal(true);
+      expect(saved.availability).to.equal(availability);
       expect(saved.restrictions).to.equal(longRestriction);
       expect(saved.notes).to.equal(notes);
       expect(saved.tag).to.equal(message.author.tag);
@@ -160,6 +164,7 @@ describe("donation", () => {
     const platform = "PC";
     const items = "2 Ivara Prime, 1 Rhino Prime, 10 Memeing Strike";
     const anonymous = "Y";
+    const availability = "Any time after 12 every day UTC";
     const restrictions = "Beginner";
     const notes = "Iz onli gem, y u hev 2 b med?";
     let details;
@@ -167,7 +172,7 @@ describe("donation", () => {
     before(async () => {
       await storage.init(args.storageOpts);
 
-      const responses = [ign, platform, items, anonymous, restrictions, notes];
+      const responses = [ign, platform, items, anonymous, availability, restrictions, notes];
       details = units.tidyResponses(message, responses);
     });
 

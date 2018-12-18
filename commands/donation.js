@@ -30,8 +30,9 @@ const tidyResponses = (message, responses) => {
     platform: responses[1].toUpperCase(),
     items: responses[2],
     anonymous: responses[3].toUpperCase() === "Y",
-    restrictions: responses[4].toLowerCase() === "none" ? "" : expandRestrictions(responses[4]),
-    notes: responses[5].toUpperCase() === "N" ? "" : responses[5],
+    availability: responses[4],
+    restrictions: responses[5].toLowerCase() === "none" ? "" : expandRestrictions(responses[5]),
+    notes: responses[6].toUpperCase() === "N" ? "" : responses[6],
     tag: message.author.tag,
     userId: message.author.id
   };
@@ -46,7 +47,6 @@ const expandRestrictions = (response) => {
     "beginner": "Beginner - Up to 100h in-game time.",
     "novice": "Novice - Less than 250h in-game time.",
     "unowned": "Unowned - The winner must not already have a copy of this item.",
-    "unmastered": "Unmastered - The winner must have not already mastered the item being donated.",
   };
 
   const restrictions = response.split("|");
@@ -80,6 +80,7 @@ IGN: ${responses.ign}
 Platform: ${responses.platform}
 Items: ${responses.items}
 Anonymous? ${responses.anonymous ? "Yes" : "No" }
+Availability: ${responses.availability}
 Restrictions: ${responses.restrictions}
 Notes: ${responses.notes}
 Submitter: ${responses.tag} (ID:${responses.userId})
@@ -108,6 +109,7 @@ ID: ${id}
 IGN: ${responses.ign} ${responses.anonymous ? "(anonymous)" : ""}
 Platform: ${responses.platform}
 Items: ${responses.items}
+Availability: ${responses.availability}
 Restrictions: ${responses.restrictions}
 Additional Notes: ${responses.notes}\`\`\``
   );

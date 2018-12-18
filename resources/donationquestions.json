@@ -3,12 +3,12 @@
   "What platform are you on?",
   "What items would you like to donate? Please separate them with commas.",
   "Would you like to remain anonymous? Y/N",
+  "At what times are you available to trade? Please remember to include the timezone (e.g UTC, GMT, etc).",
   [
     "Should there be any restrictions placed on who can win the items you have donated? You can set it to the following or a custom restriction:",
     "Beginner - Up to 100h in-game time.",
     "Novice - Less than 250h in-game time.",
     "Unowned - The winner must not already have a copy of this item.",
-    "Unmastered - The winner must have not already mastered the item being donated.",
     "Typing one of the above will automatically expand the restriction (ie. `Beginner` becomes `Beginner - Up to 100h in-game time.`).",
     "In the event of multiple restrictions, please separate each with a | (pipe) character.",
     "If you would not like to add a restriction, just type `none`."

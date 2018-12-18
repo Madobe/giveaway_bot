@@ -56,7 +56,7 @@ describe("wonby", () => {
 
   describe("#conf", () => {
     it("requires the user to be a moderator", () => {
-      expect(command.conf.permissionLevel).to.equal("Moderator");
+      expect(command.conf.permissionLevel).to.equal("Giveaway");
     });
   });
 });
