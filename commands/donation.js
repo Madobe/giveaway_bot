@@ -1,3 +1,4 @@
+const { RichEmbed } = require("discord.js");
 const storage = require("node-persist");
 
 const userInput = require("../modules/userinput");
@@ -74,17 +75,19 @@ const saveDonation = async (message, responses, args) => {
   list[id] = responses;
   await storage.setItem("donationsList", list);
 
-  message.channel.send(`Donation logged with these responses:
-\`\`\`
-IGN: ${responses.ign}
-Platform: ${responses.platform}
-Items: ${responses.items}
-Anonymous? ${responses.anonymous ? "Yes" : "No" }
-Availability: ${responses.availability}
-Restrictions: ${responses.restrictions}
-Notes: ${responses.notes}
-Submitter: ${responses.tag} (ID:${responses.userId})
-\`\`\``);
+  const embed = new RichEmbed()
+    .setColor("#0486f7")
+    .setTitle("Donation Responses")
+    .addField("IGN", `${responses.ign} ${(responses.anonymous ? "(anonymous)" : "")}`)
+    .addField("Platform", responses.platform)
+    .addField("Items", responses.items)
+    .addField("Anonymous?", `${(responses.anonymous ? "Yes" : "No")}`)
+    .addField("Availability", responses.availability)
+    .addField("Restrictions", responses.restrictions)
+    .addField("Notes", responses.notes)
+    .addField("Submitter", `${responses.tag} (ID:${responses.userId})`);
+
+  message.channel.send({ embed });
 
   return id;
 };
@@ -102,17 +105,20 @@ const sendNotification = async (client, message, responses, id, args) => {
   const donationNotificationChannelId = await storage.getItem("donationNotificationChannelId");
   const donationNotificationChannel = client.channels.get(donationNotificationChannelId);
   if (donationNotificationChannel === undefined) return message.channel.send(`No notification channel set. New donation created under ID "${id}"`);
-  return donationNotificationChannel.send(
-    `New donation received.
-\`\`\`Discord Tag: ${responses.tag} (ID:${responses.userId})
-ID: ${id}
-IGN: ${responses.ign} ${responses.anonymous ? "(anonymous)" : ""}
-Platform: ${responses.platform}
-Items: ${responses.items}
-Availability: ${responses.availability}
-Restrictions: ${responses.restrictions}
-Additional Notes: ${responses.notes}\`\`\``
-  );
+
+  const embed = new RichEmbed()
+    .setColor("#0486f7")
+    .setTitle("New Donation")
+    .addField("Discord Tag", `${responses.tag} (ID:${responses.userId})`)
+    .addField("ID", id.toString())
+    .addField("IGN", `${responses.ign} ${(responses.anonymous ? "(anonymous)" : "")}`)
+    .addField("Platform", responses.platform)
+    .addField("Items", responses.items)
+    .addField("Availability", responses.availability)
+    .addField("Restrictions", responses.restrictions)
+    .addField("Additional Notes", responses.notes);
+
+  return donationNotificationChannel.send({ embed });
 };
 
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars

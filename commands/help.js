@@ -1,34 +1,79 @@
+const { RichEmbed } = require('discord.js');
+
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
-  return message.channel.send(`\`\`\`
-Variables that have ? at the end are optional.
-Time for any function that uses it is in the form "#[s/m/h/d]" (eg. "30s"). No quotation marks.
+  const embed = new RichEmbed()
+    .setColor("#0486f7")
+    .setTitle("Giveaway Bot Commands")
+    .setDescription('Time for any function that uses it is in the form "#[s/m/h/d]" (eg. 30s).')
+    .addField(
+      "!donation",
+      "Make a donation."
+    )
+    .addField(
+      "!help",
+      "You're reading it."
+    )
+    .addField(
+      "!invite",
+      "Link to invite the bot. Not available."
+    )
+    .addField(
+      "!r",
+      "Plz read."
+    )
+    .addField(
+      "!remind time message",
+      "Sends the message given back to the channel after the time has elapsed."
+    )
+    .addField(
+      "!top",
+      "See the current top donators."
+    );
 
-!donation - Make a donation.
-  !donation
-!help - You're reading it.
-  !help
-!invite - Link to invite the bot. Not available.
-  !invite
-!remind - Sends the message given back to the channel after the time has elapsed.
-  !remind time message
-!top - See the current top donators.
-  !top
+  message.channel.send({ embed });
+  
+  if (message.member.roles.get(process.env.GIVEAWAY_ROLE) === undefined) {
+    return;
+  }
 
-Staff only:
-!cleanchannel - Cleans the channel every time the interval passes. Also does an initial clean. Ignores any messages with the given IDs.
-  !cleanchannel channelId interval messageIdsToIgnore
-!collected - Writes to the spreadsheet. Only use when items have been claimed.
-  !collected id?
-!disqualified - Adds the Disqualified role to the mentioned user for the specified length of time.
-  !disqualified user time
-!donationresponses - Where to put the notification that somebody did !donation.
-  !donationnotificationchannel channelId
-!leaderchannel - Which channel gets the auto-updating leaderboards.
-  !leaderchannel channelId
-!role - Returns the ID of the given role.
-  !role roleName
-!wonby - Set winners on the spreadsheet.
-  !wonby row | tags | igns\`\`\``);
+  const staffEmbed = new RichEmbed()
+    .setColor("#ff471a")
+    .setTitle("Giveaway Bot Staff Commands")
+    .setDescription("These commands are for staff only. Variables that have ? at the end are optional.")
+    .addField(
+      "!cleanchannel channelId interval messageIdsToIgnore",
+      "Cleans the channel every time the interval passes. Also does an initial clean. Ignores any messages with the given IDs."
+    )
+    .addField(
+      "!collected id?",
+      "Writes to the spreadsheet. Only use when items have been claimed. The id parameter is optional. If the parameter is not provided, it operates on the last entry."
+    )
+    .addField(
+      "!disqualified user time",
+      "Adds the Disqualified role to the mentioned user for the specified length of time."
+    )
+    .addField(
+      "!donationresponses channelId",
+      "Where to put the notification that somebody did !donation."
+    )
+    .addField(
+      "!leaderchannel channelId",
+      "Sets which channel gets the auto-updating leaderboards."
+    )
+    .addField(
+      "!role roleName",
+      "Returns the ID of the given role."
+    )
+    .addField(
+      "!rolememberlist role",
+      "Returns a list of members with the specified role."
+    )
+    .addField(
+      "!wonby row | tags | igns",
+      "Set winners on the spreadsheet."
+    );
+
+  return message.channel.send({ embed: staffEmbed });
 };
 
 exports.conf = {

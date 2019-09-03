@@ -1,3 +1,4 @@
+const { RichEmbed } = require("discord.js");
 const storage = require("node-persist");
 
 const GSheets = require("../services/gsheets");
@@ -8,9 +9,16 @@ const gsheet = new GSheets();
  * @return {Array<string>} An array of strings, each representing a person with their plat values.
  */
 const generate = async () => {
-  const rows = await gsheet.getValues("14t9-54udr_eqaCgq9g1rWhPLHY_E-RxfdhKTXxgCERc", "A2:B11");
+  const rows = await gsheet.getValues("14t9-54udr_eqaCgq9g1rWhPLHY_E-RxfdhKTXxgCERc", "B2:C11");
   const lines = rows.map((row, i) => `${i + 1}. **${row[0]}** - ${row[1]}p`).join("\n");
-  return lines + "\n\n**Complete Donator Leaderboard**: https://drive.google.com/open?id=14t9-54udr_eqaCgq9g1rWhPLHY_E-RxfdhKTXxgCERc";
+
+  const embed = new RichEmbed()
+    .setColor("#0486f7")
+    .setTitle("Donation Leaderboard")
+    .setDescription(lines)
+    .setURL("https://docs.google.com/spreadsheets/d/14t9-54udr_eqaCgq9g1rWhPLHY_E-RxfdhKTXxgCERc")
+
+  return embed;
 };
 
 /**
