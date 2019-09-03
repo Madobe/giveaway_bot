@@ -4,6 +4,10 @@ const format = require("date-fns/format");
 const GSheets = require("../services/gsheets");
 const gsheet = new GSheets();
 
+const numberOnly = (str) => {
+  return str.replace(/\D/g, '');
+};
+
 /**
  * Checks if an ID was provided. If not, it returns the last donation made.
  * @param {Object} list A hash with donation details organized via the time they were created.
@@ -18,17 +22,11 @@ const getDonation = (list, id) => {
 };
 
 /**
- * Checks an item to see if it's Prime and has a number in front.
+ * Checks an item to see if it's prime.
  * @param {string} item The item name we're checking.
  */
 const isPrime = (item) => {
-  item = item.toLowerCase();
-
-  if(!isNaN(item[0]) && (item.endsWith("prime") || item.endsWith("primes"))) {
-    return true;
-  } else {
-    return false;
-  }
+  return /\b(primes?d{0})\b/gi.test(item.toLowerCase());
 };
 
 /**
@@ -36,7 +34,7 @@ const isPrime = (item) => {
  * @param {string} item The item name we're checking.
  */
 const isPlural = (item) => {
-  return item.toLowerCase().endsWith("primes");
+  return /bprimes\b/gi.test(item);
 };
 
 /**
@@ -45,13 +43,16 @@ const isPlural = (item) => {
  * @return {Array<string>} An array of the item name, multiplied by the number originally in it.
  */
 const singularize = async (item) => {
-  if(isPlural(item)) item = item.slice(0, -1);
-  let parts = item.split(" ");
-  item = parts.slice(1).join(" ");
+  if(isPlural(item)) item = item.replace(/\bprimes\b/gi, 'Prime')
 
-  const times = parseInt(parts.shift()) || 1;
+  const amountRegex = /\b(x?[0-9]|[0-9]x?)\b/gi;
+  let amount = item.match(amountRegex)[0];
+  amount = parseInt(numberOnly(amount));
+
   let copies = [];
-  for(let i = 0; i < times; i++) {
+  item = item.replace(amountRegex, '').trim();
+
+  for (let i = 0; i < amount; i++) {
     copies.push(item);
   }
 
@@ -126,26 +127,9 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 
   await gsheet.insertRow(
     process.env.TRACKER_SPREADSHEET_ID,
-    "A2:R999",
+    "A2:R",
     rows
   );
-
-  // If they're anonymous, add here too
-  if(details.anonymous) {
-    let anonRows = [];
-    for(let i = 0; i < splitItems.length; i++) {
-      anonRows.push([
-        details.tag,
-        details.userId,
-        details.ign
-      ]);
-    }
-    await gsheet.insertRow(
-      process.env.ANON_SPREADSHEET_ID,
-      "ANON NAMES!A1:C999",
-      anonRows
-    );
-  }
 
   message.channel.send("Spreadsheet updated.");
 

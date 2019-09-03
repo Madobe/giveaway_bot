@@ -4,6 +4,12 @@ const storage = require("node-persist");
 const userInput = require("../modules/userinput");
 const questions = require("../resources/donationquestions.json");
 
+const toTitleCase = (str) => {
+  return str.replace(/\w\S*/g, (txt) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+};
+
 /**
  * Get responses to all the donation questions.
  * @param {Message} message A Discord.js Message object.
@@ -29,11 +35,11 @@ const tidyResponses = (message, responses) => {
   return {
     ign: responses[0],
     platform: responses[1].toUpperCase(),
-    items: responses[2],
+    items: toTitleCase(responses[2]),
     anonymous: responses[3].toUpperCase() === "Y",
     availability: responses[4],
-    restrictions: responses[5].toLowerCase() === "none" ? "" : expandRestrictions(responses[5]),
-    notes: responses[6].toUpperCase() === "N" ? "" : responses[6],
+    restrictions: responses[5].toLowerCase() === "none" ? "N/A" : expandRestrictions(responses[5]),
+    notes: responses[6].toUpperCase() === "N" ? "N/A" : responses[6],
     tag: message.author.tag,
     userId: message.author.id
   };
