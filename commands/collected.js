@@ -45,7 +45,7 @@ const isPlural = (item) => {
 const singularize = async (item) => {
   if(isPlural(item)) item = item.replace(/\bprimes\b/gi, 'Prime')
 
-  const amountRegex = /\b(x?[0-9]|[0-9]x?)\b/gi;
+  const amountRegex = /(^x?[0-9]x?|x?[0-9]x?$)/gi;
   let amount = item.match(amountRegex)[0];
   amount = parseInt(numberOnly(amount));
 
