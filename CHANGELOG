@@ -1,0 +1,8 @@
+v1.0.1
+-!donation and !top now uses embeds for better visual appearance. Staff commands have been separated to their own embed and are only visible to those with the correct role.
+-Multiple restrictions on donations must be separated by commas instead of pipe characters now.
+-Testing for prime items now uses heavy regex. Number checking changed to include front and back, and x letters.
+-Title case enforced on all item names (affects x2 and such because the x is in front).
+-Changed the maximum row value from 999 to unspecified to prevent a future problem.
+-Removed anonymous tracking sheet updating because it's obsolete.
+-Changed the filler values for restrictions and notes from blanks to N/A to accommodate the new embed usage.

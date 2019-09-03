@@ -1,6 +1,6 @@
 {
   "name": "giveaway_bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Warframe Giveaway server bot",
   "main": "index.js",
   "scripts": {
