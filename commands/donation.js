@@ -50,7 +50,7 @@ const expandRestrictions = (response) => {
     "unowned": "Unowned - The winner must not already have a copy of this item.",
   };
 
-  const restrictions = response.split("|");
+  const restrictions = response.split(",");
 
   let expanded = [];
   for(let i = 0; i < restrictions.length; i++) {
