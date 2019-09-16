@@ -1,3 +1,6 @@
+v1.0.2
+-Made it so the !collected command doesn't fail if there was no number to indicate how many of an item was being donated.
+
 v1.0.1
 -!donation and !top now uses embeds for better visual appearance. Staff commands have been separated to their own embed and are only visible to those with the correct role.
 -Multiple restrictions on donations must be separated by commas instead of pipe characters now.
