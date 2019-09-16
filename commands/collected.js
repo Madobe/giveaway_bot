@@ -26,7 +26,7 @@ const getDonation = (list, id) => {
  * @param {string} item The item name we're checking.
  */
 const isPrime = (item) => {
-  return /\b(primes?d{0})\b/gi.test(item.toLowerCase());
+  return /\b(primes?d{0})\b/gi.test(item);
 };
 
 /**
@@ -46,8 +46,14 @@ const singularize = async (item) => {
   if(isPlural(item)) item = item.replace(/\bprimes\b/gi, 'Prime')
 
   const amountRegex = /(^x?[0-9]x?|x?[0-9]x?$)/gi;
-  let amount = item.match(amountRegex)[0];
-  amount = parseInt(numberOnly(amount));
+  const match = item.match(amountRegex);
+  let amount;
+  if (match !== null) {
+    amount = item.match(amountRegex)[0];
+    amount = parseInt(numberOnly(amount));
+  } else {
+    amount = 1;
+  }
 
   let copies = [];
   item = item.replace(amountRegex, '').trim();
