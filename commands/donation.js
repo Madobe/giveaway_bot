@@ -1,70 +1,9 @@
 const { RichEmbed } = require("discord.js");
 const storage = require("node-persist");
 
-const userInput = require("../modules/userinput");
+const Responses = require("../models/responses");
+const gatherAnswers = require("../utilities/inputter").gatherAnswers;
 const questions = require("../resources/donationquestions.json");
-
-const toTitleCase = (str) => {
-  return str.replace(/\w\S*/g, (txt) => {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-  });
-};
-
-/**
- * Get responses to all the donation questions.
- * @param {Message} message A Discord.js Message object.
- * @return {Array<string>} An array representing the user's responses to the questions.
- */
-const getResponses = async (message) => {
-  let responses = [];
-
-  for(let i = 0; i < questions.length; i++) {
-    const response = await userInput.getSingleInput(message, questions[i]);
-    if(response.toLowerCase() === "cancel") return message.channel.send("Donation process canceled.");
-    responses.push(response);
-  }
-
-  return responses;
-};
-
-/**
- * Takes the donation responses and assign to to keys on a hash and format them.
- * @param {Array<string>} responses An array of the responses to the donation questions.
- */
-const tidyResponses = (message, responses) => {
-  return {
-    ign: responses[0],
-    platform: responses[1].toUpperCase(),
-    items: toTitleCase(responses[2]),
-    anonymous: responses[3].toUpperCase() === "Y",
-    availability: responses[4],
-    restrictions: responses[5].toLowerCase() === "none" ? "N/A" : expandRestrictions(responses[5]),
-    notes: responses[6].toUpperCase() === "N" ? "N/A" : responses[6],
-    tag: message.author.tag,
-    userId: message.author.id
-  };
-};
-
-/**
- * Takes the restrictions and expand keywords to include descriptions as well as split
- * @param {string} response The user's inputted response for what restrictions are on the donation.
- */
-const expandRestrictions = (response) => {
-  const expansions = {
-    "beginner": "Beginner - Up to 100h in-game time.",
-    "novice": "Novice - Less than 250h in-game time.",
-    "unowned": "Unowned - The winner must not already have a copy of this item.",
-  };
-
-  const restrictions = response.split(",");
-
-  let expanded = [];
-  for(let i = 0; i < restrictions.length; i++) {
-    const restriction = restrictions[i].toLowerCase().trim();
-    expanded.push(expansions[restriction] || restrictions[i].trim());
-  }
-  return expanded.join("\n");
-};
 
 /**
  * Persists the donation entry using node-persist.
@@ -75,10 +14,13 @@ const expandRestrictions = (response) => {
  */
 const saveDonation = async (message, responses, args) => {
   const storageOpts = args === undefined ? {} : args.storageOpts;
+
   await storage.init(storageOpts);
+
   let list = await storage.getItem("donationsList") || {};
   const id = Date.now();
   list[id] = responses;
+
   await storage.setItem("donationsList", list);
 
   const embed = new RichEmbed()
@@ -107,10 +49,15 @@ const saveDonation = async (message, responses, args) => {
  */
 const sendNotification = async (client, message, responses, id, args) => {
   const storageOpts = args === undefined ? {} : args.storageOpts;
+
   await storage.init(storageOpts);
+
   const donationNotificationChannelId = await storage.getItem("donationNotificationChannelId");
   const donationNotificationChannel = client.channels.get(donationNotificationChannelId);
-  if (donationNotificationChannel === undefined) return message.channel.send(`No notification channel set. New donation created under ID "${id}"`);
+
+  if (donationNotificationChannel === undefined) {
+    return message.channel.send(`No notification channel set. New donation created under ID "${id}"`);
+  }
 
   const embed = new RichEmbed()
     .setColor("#0486f7")
@@ -128,11 +75,13 @@ const sendNotification = async (client, message, responses, id, args) => {
 };
 
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
-  const _responses = await getResponses(message);
-  if(_responses === "cancel") return;
-  const responses = tidyResponses(message, _responses);
+  const _responses = await gatherAnswers(message, questions, "cancel");
 
+  if(_responses === "cancel") return;
+
+  const responses = tidyResponses(message, _responses);
   const id = await saveDonation(message, responses, args);
+
   sendNotification(client, message, responses, id);
 };
 
