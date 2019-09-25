@@ -1,6 +1,6 @@
 const Promise = require("promise");
 const { google } = require("googleapis");
-const credentials = require("../credentials");
+const credentials = require("../config/credentials");
 
 const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
 

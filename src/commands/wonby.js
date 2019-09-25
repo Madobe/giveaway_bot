@@ -1,5 +1,5 @@
 // Expected format: !wonby row | tags | igns
-const GSheets = require("../services/gsheets");
+const GSheets = require("../models/gsheets");
 const gsheet = new GSheets();
 
 /**

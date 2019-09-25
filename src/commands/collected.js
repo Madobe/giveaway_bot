@@ -1,7 +1,7 @@
 const storage = require("node-persist");
 const format = require("date-fns/format");
 
-const GSheets = require("../services/gsheets");
+const GSheets = require("../models/gsheets");
 const gsheet = new GSheets();
 
 const numberOnly = (str) => {
@@ -46,8 +46,14 @@ const singularize = async (item) => {
   if(isPlural(item)) item = item.replace(/\bprimes\b/gi, 'Prime')
 
   const amountRegex = /(^x?[0-9]x?|x?[0-9]x?$)/gi;
-  let amount = item.match(amountRegex)[0];
-  amount = parseInt(numberOnly(amount));
+  const match = item.match(amountRegex);
+  let amount;
+  if (match !== null) {
+    amount = item.match(amountRegex)[0];
+    amount = parseInt(numberOnly(amount));
+  } else {
+    amount = 1;
+  }
 
   let copies = [];
   item = item.replace(amountRegex, '').trim();

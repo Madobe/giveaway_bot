@@ -13,7 +13,7 @@ module.exports = async (address) => {
     if (!file.endsWith(".js")) return;
 
     try {
-      const props = require(path.join("..", address, file));
+      const props = require(path.resolve(address, file));
       const name = file.split(".")[0];
       commands[name] = props;
     } catch (e) {

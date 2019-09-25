@@ -1,5 +1,6 @@
 # Project specific
-credentials.json
+src/config/credentials.json
+src/db/database.sqlite
 .node-persist/
 .vscode/
 

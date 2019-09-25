@@ -1,0 +1,19 @@
+Necessary things
+-A way to ask questions and gather the answers for them.
+-A way to update Google spreadsheets.
+-A way to run timers.
+
+General
+-"Back end" system to handle starting everything up
+
+Models
+-Responses (Donation?)
+-GSheets
+
+Views
+-None
+
+Controllers
+
+Workers
+-Timer (Note that this will just be a fake worker because actual workers are experimental.)

@@ -2,7 +2,7 @@
   "name": "giveaway_bot",
   "version": "1.0.1",
   "description": "Warframe Giveaway server bot",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "mocha --recursive ./test"
   },
@@ -12,12 +12,15 @@
   },
   "author": "Madobe",
   "license": "GPL-3.0",
+  "type": "module",
   "dependencies": {
     "date-fns": "^1.29.0",
     "discord.js": "^11.5.1",
     "googleapis": "^42.0.0",
     "node-persist": "^3.0.1",
-    "promise": "^8.0.2"
+    "objectmodel": "^4.0.3",
+    "promise": "^8.0.2",
+    "sqlite3": "^4.1.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

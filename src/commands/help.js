@@ -1,4 +1,5 @@
 const { RichEmbed } = require('discord.js');
+const { checkPerms } = require('../utilities/perms');
 
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
   const embed = new RichEmbed()
@@ -32,7 +33,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 
   message.channel.send({ embed });
   
-  if (message.member.roles.get(process.env.GIVEAWAY_ROLE) === undefined) {
+  if (!checkPerms('GIVEAWAY', message)) {
     return;
   }
 
