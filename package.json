@@ -4,6 +4,8 @@
   "description": "Warframe Giveaway server bot",
   "main": "src/index.js",
   "scripts": {
+    "start": "NODE_ENV=development node ./src/index.js",
+    "start:production": "NODE_ENV=production node ./src/index.js",
     "test": "mocha --recursive ./test"
   },
   "repository": {
@@ -14,12 +16,14 @@
   "license": "GPL-3.0",
   "type": "module",
   "dependencies": {
+    "cron": "^1.7.2",
     "date-fns": "^1.29.0",
     "discord.js": "^11.5.1",
     "googleapis": "^42.0.0",
-    "node-persist": "^3.0.1",
+    "lodash": "^4.17.15",
     "objectmodel": "^4.0.3",
     "promise": "^8.0.2",
+    "sequelize": "^5.19.1",
     "sqlite3": "^4.1.0"
   },
   "devDependencies": {

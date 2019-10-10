@@ -1,156 +1,119 @@
-const storage = require("node-persist");
-const format = require("date-fns/format");
-
-const GSheets = require("../models/gsheets");
-const gsheet = new GSheets();
-
-const numberOnly = (str) => {
-  return str.replace(/\D/g, '');
-};
+/*
+ * Writes a donation to the Google Spreadsheet. If an ID is provided, that specific donation is the
+ * one written. If not, then it uses the last donation made.
+ */
+const {
+  drop,
+  flow,
+  join,
+  split
+} = require('lodash/fp')
+const { RichEmbed } = require('discord.js')
+const format = require("date-fns/format")
+const Donation = require('../models').Donation
+const { insertRow } = require('../utilities/gsheets')
 
 /**
- * Checks if an ID was provided. If not, it returns the last donation made.
- * @param {Object} list A hash with donation details organized via the time they were created.
- * @param {string} id A string representing a key from list.
+ * Formats message.content to remove the other parts of the command.
+ * @param {String} s The message content that should be formatted to be inserted as staff notes.
+ * @returns {String} The string without the first two parts.
  */
-const getDonation = (list, id) => {
-  if(id === undefined || id === "") {
-    return Object.keys(list).sort((a, b) => b - a)[0];
-  }
-  console.log(id);
-  return id;
-};
+const formatNotes = flow([
+  split(' '),
+  drop(2),
+  join(' ')
+])
 
 /**
- * Checks an item to see if it's prime.
- * @param {string} item The item name we're checking.
+ * Returns a template for a row on the Google Spreadsheet.
+ * @param {*} message Discord.js Message object.
+ * @param {*} donation Sequelize model for donations.
+ * @returns {Array<*>} Row template.
  */
-const isPrime = (item) => {
-  return /\b(primes?d{0})\b/gi.test(item.toLowerCase());
-};
+const getTemplate = (message, donation) => [
+  format(new Date(), "YYYY-MM-DD HH:mm:ss"),               // 0 - Date
+  null,                                                    // 1 - Status
+  true,                                                    // 2 - Collected?
+  false,                                                   // 3 - Started?
+  false,                                                   // 4 - Ended?
+  false,                                                   // 5 - Delivered?
+  "ITEM HERE",                                             // 6 - Item
+  "",                                                      // 7 - Plat Value (Estimated)
+  donation.platform,                                       // 8 - Platform
+  donation.restrictions,                                   // 9 - Restrictions
+  donation.anonymous ? "anonymous" : donation.discord_tag, // 10 - Donated By (Discord Tag)
+  donation.anonymous ? "anonymous" : donation.discord_id,  // 11 - Donated By (Discord ID)
+  donation.ign,                                            // 12 - Donated By (IGN)
+  message.author.tag,                                      // 13 - Held By
+  "",                                                      // 14 - Won By
+  "",                                                      // 15 - Won By (Discord ID)
+  "",                                                      // 16 - Won By (IGN)
+  donation.notes === "N" ? "N/A" : donation.notes,         // 17 - Donor Notes
+  formatNotes(message.content)                             // 18 - Staff Notes
+]
 
 /**
- * Checks to see if the item name is plural. Specifically, if it's the word "primes".
- * @param {string} item The item name we're checking.
+ * Returns an embed representing a donation.
+ * @param {*} donation Sequelize model for donations.
+ * @returns {RichEmbed} Embed of a donation.
  */
-const isPlural = (item) => {
-  return /bprimes\b/gi.test(item);
-};
+const toEmbed = (message, donation) => new RichEmbed()
+  .setTitle('Rows Added to Spreadsheet')
+  .setColor('#0486f7')
+  .addField('Donation ID (Database Internal)', donation.id)
+  .addField('Discord', `${donation.discord_tag} (ID:${donation.discord_id})`)
+  .addField('IGN', donation.ign)
+  .addField('Platform', donation.platform)
+  .addField('Items', donation.items)
+  .addField('Anonymous', donation.anonymous ? "Yes" : "No")
+  .addField('Availability', donation.availability)
+  .addField('Restrictions', donation.restrictions)
+  .addField('Notes', donation.notes === "N" ? "N/A" : donation.notes)
+  .addField('Collector', `${message.author.tag} (ID:${message.author.id})`)
 
 /**
- * Removes the s on an item name and multiplies it.
- * @param {string} item The item name we're operating on.
- * @return {Array<string>} An array of the item name, multiplied by the number originally in it.
+ * Replaces the item column in the template rows with each item and gathers the results.
+ * @param {Array<String>} items An array of item names. The only variable across rows.
+ * @param {Array<*>} template An array of values for the spreadsheet. Only item names change in
+ * this.
+ * @param {Array<*>} rows The resulting rows after putting item names in. Accumulator.
+ * @returns {Array<Array<*>>} A 2D array of rows.
  */
-const singularize = async (item) => {
-  if(isPlural(item)) item = item.replace(/\bprimes\b/gi, 'Prime')
-
-  const amountRegex = /(^x?[0-9]x?|x?[0-9]x?$)/gi;
-  const match = item.match(amountRegex);
-  let amount;
-  if (match !== null) {
-    amount = item.match(amountRegex)[0];
-    amount = parseInt(numberOnly(amount));
+const formRows = (items, template, rows = []) => {
+  if (items.length === 0) {
+    return rows
   } else {
-    amount = 1;
+    return formRows(
+      drop(1, items),
+      template,
+      [
+        ...rows,
+        Object.assign([], template, { 6: items[0] })
+      ]
+    )
   }
-
-  let copies = [];
-  item = item.replace(amountRegex, '').trim();
-
-  for (let i = 0; i < amount; i++) {
-    copies.push(item);
-  }
-
-  return copies;
-};
+}
 
 /**
- * Takes the items and sees if any are prime and multiples. If they are, then 
- * they are split apart into multiple copies of the item.
- * ie. "3 Ember Prime" => "Ember Prime", "Ember Prime", "Ember Prime"
- * @param {Array<string>} items An array of item names.
- * @return {Array<string>} An array of items which have been split even further.
+ * Exported function.
  */
-const processItems = async (items) => {
-  let splitItems = [];
+exports.run = async (client, message, args) => {
+  Donation.findOne({
+    where: args[0] ? { id: args[0] } : {},
+    order: [['id', 'DESC']]
+  }).then(donation => {
+    const rows = formRows(split(' ', donation.items), getTemplate(message, donation))
 
-  for(let i = 0; i < items.length; i++) {
-    if(isPrime(items[i])) {
-      splitItems = splitItems.concat(singularize(items[i]));
-    } else {
-      splitItems.push(items[i]);
-    }
-  }
+    insertRow(
+      process.env.TRACKER_SPREADSHEET_ID,
+      "A2:R",
+      rows
+    )
 
-  let promisedArray = await Promise.all(splitItems);
-  promisedArray = [].concat(...promisedArray);
-  return promisedArray;
-};
-
-exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
-  let id = message.content.split(" ")[1];
-
-  const storageOpts = args instanceof Array ? {} : args.storageOpts;
-  await storage.init(storageOpts);
-  let list = await storage.getItem("donationsList");
-
-  let details;
-  try {
-    details = list[getDonation(list, id)];
-  } catch(err) {
-    return message.channel.send("No donations have been made yet.");
-  }
-
-  const date = format(new Date(), "YYYY-MM-DD HH:mm:ss");
-  const items = details.items.split(/\s*,\s*/);
-  const splitItems = await processItems(items);
-
-  const userId = details.userId || client.users.find("tag", details.tag).id;
-  const rows = splitItems.map(item => {
-    return [
-      date, // Timestamp
-      null, // Switch
-      true, // Collected
-      false, // Started
-      false, // Ended
-      false, // Delivered
-      item, // Item
-      "", // Plat value (Estimated)
-      details.platform, // Platform
-      details.restrictions, // Restrictions
-      details.anonymous ? "anonymous" : details.tag, // Donated By
-      details.anonymous ? "anonymous" : userId, // Donated By (Discord ID)
-      details.anonymous ? "anonymous" : details.ign, // Donated By (IGN)
-      message.author.tag, // Held By
-      "", // Won By
-      "", // Won By (Discord ID)
-      "", // Won By (IGN)
-      details.notes, // Donor Notes
-      message.content.split(" ").slice(2).join(" ") // Staff Notes
-    ];
-  });
-
-  await gsheet.insertRow(
-    process.env.TRACKER_SPREADSHEET_ID,
-    "A2:R",
-    rows
-  );
-
-  message.channel.send("Spreadsheet updated.");
-
-  return splitItems;
-};
+    message.channel.send(toEmbed(message, donation))
+  }).catch(e => console.error(e))
+}
 
 exports.conf = {
-  permissionLevel: "Giveaway"
-};
-
-// Exported specifically for unit testing
-exports.units = {
-  getDonation: getDonation,
-  isPrime: isPrime,
-  isPlural: isPlural,
-  singularize: singularize,
-  processItems: processItems
-};
+  permissionLevel: 'giveaway'
+}

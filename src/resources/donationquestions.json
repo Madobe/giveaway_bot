@@ -1,7 +1,4 @@
-const toTitleCase = require("../utilities/string-ops").toTitleCase;
-const expandRestrictions = require("./restrictions").expandRestrictions;
-
-module.exports = [
+[
   {
     "name": "ign",
     "question": [
@@ -12,18 +9,15 @@ module.exports = [
   },
   {
     "name": "platform",
-    "question": "What platform are you on?",
-    "format": (input) => { return input.toUpperCase(); }
+    "question": "What platform are you on?"
   },
   {
     "name": "items",
-    "question": "What items would you like to donate? Please separate them with commas.",
-    "format": (input) => { return toTitleCase(input); }
+    "question": "What items would you like to donate? Please separate them with commas."
   },
   {
     "name": "anonymous",
-    "question": "Would you like to remain anonymous? Y/N",
-    "format": (input) => { return input.toUpperCase() === "Y"; }
+    "question": "Would you like to remain anonymous? Y/N"
   },
   {
     "name": "availability",
@@ -39,12 +33,10 @@ module.exports = [
       "Typing one of the above will automatically expand the restriction (ie. `Beginner` becomes `Beginner - Up to 100h in-game time.`).",
       "In the event of multiple restrictions, please separate each with a comma.",
       "If you would not like to add a restriction, just type `none`."
-    ],
-    "format": (input) => { return input.toLowerCase() === "none" ? "N/A" : expandRestrictions(input); }
+    ]
   },
   {
     "name": "notes",
-    "question": "Are there any notes you would like to add? (Type N if no.)",
-    "format": (input) => { return input.toUpperCase() === "N" ? "N/A" : input; }
+    "question": "Are there any notes you would like to add? (Type N if no.)"
   }
 ]

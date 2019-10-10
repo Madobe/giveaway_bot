@@ -1,42 +1,30 @@
-/**
- * Gets the first message typed by the invoking user in the channel they invoked this function from.
- * @param {Message} message The Message object that invoked the command calling this.
+/*
+ * User Input
+ * Gathers responses to a set of questions. Note that a max stack size of 10k+ is present in Node,
+ * so it's unrealistic for the max stack size to be reached.
  */
-const getAnswer = async (message) => {
-  const filter = m => m.author.id === message.author.id;
-  let response;
+const { join, head, drop } = require('lodash/fp')
+const filter = message => m => m.author.id === message.author.id
+const formatText = x => typeof x === 'string' ? x : join('\n', x)
 
-  await message.channel
-    .awaitMessages(filter, { max: 1 })
-    .then(collected => response = collected.first().content);
-  return response;
-};
+const getResponses = async (message, questions, cancel, responses = {}) => {
+  if (questions.length === 0) {
+    return responses
+  } else {
+    const q = head(questions)
+    const text = formatText(q.question)
+    const msg = message.channel.send(text)
+    const messageFilter = filter(message)
 
-/**
- * Gathers answers from the user that sent the message invoking this function.
- * @param {Message} message The Message object that invoked the command calling this.
- * @param {Array} questions The questions to ask. An array of objects with two properties: "name" and "question".
- * @param {String} cancel The string to use for canceling further inputs. Blank means none.
- */
-const gatherAnswers = async (message, questions, cancel) => {
-  const responses = [];
+    return await message.channel.awaitMessages(messageFilter, { max: 1 }).then(c => {
+      if (c.first().content === cancel) return false
 
-  for (let i = 0; i < questions.length; i++) {
-    const questionText = typeof(questions[i].question) === "String" ? questions[i].question : questions[i].question.join('\n');
-    const questionMessage = message.channel.send(questionText);
-    const response = await getAnswer(message);
+      const res = { ...responses, [q.name]: c.first().content }
+      msg.then(m => m.delete())
 
-    questionMessage.delete();
-
-    if (response === cancel) return false;
-
-    responses.push(response);
+      return getResponses(message, drop(1, questions), cancel, res)
+    })
   }
+}
 
-  return responses;
-};
-
-module.exports = {
-  getAnswer,
-  gatherAnswers
-};
+module.exports = getResponses

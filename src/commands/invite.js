@@ -1,4 +1,7 @@
-exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
+/*
+ * Sends the invite link for this bot to the channel.
+ */
+exports.run = async (client, message, args) => {
   return message.channel.send("https://discordapp.com/oauth2/authorize?&client_id=505827078176899094&scope=bot&permissions=68608");
 };
 

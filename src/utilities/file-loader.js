@@ -4,22 +4,13 @@
 const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
 const path = require("path");
+const { flow, split, head } = require('lodash/fp');
 
 module.exports = async (address) => {
-  const files = await readdir(address);
-  const commands = {};
+  return (await readdir(address)).filter(file => file.endsWith('.js')).reduce((acc, file) => {
+    const name = flow([split, head])('.', file)
+    const props = require(path.resolve(address, file))
 
-  files.forEach(file => {
-    if (!file.endsWith(".js")) return;
-
-    try {
-      const props = require(path.resolve(address, file));
-      const name = file.split(".")[0];
-      commands[name] = props;
-    } catch (e) {
-      console.log(`Failed to open file ${file}: ${e}`);
-    }
-  });
-
-  return commands;
+    return Object.assign(acc, { [name]: props })
+  }, {})
 }

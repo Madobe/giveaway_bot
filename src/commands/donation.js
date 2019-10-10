@@ -1,98 +1,63 @@
-const { RichEmbed } = require("discord.js");
-const storage = require("node-persist");
-
-const Responses = require("../models/responses");
-const gatherAnswers = require("../utilities/inputter").gatherAnswers;
-const questions = require("../resources/donationquestions.json");
+/*
+ * Asks the command invoker the questions in src/resources/donationquestions.json and collects the
+ * responses.
+ */
+const { RichEmbed } = require('discord.js')
+const Donation = require('../models').Donation
+const Setting = require('../models').Setting
+// @ts-ignore
+const donationQuestions = require('../resources/donationquestions.json')
+const getResponses = require('../utilities/inputter')
 
 /**
- * Persists the donation entry using node-persist.
- * @param {Message} message A Discord.js Message object.
- * @param {*} args Can be either a hash or array of arguments. Hash if it came from somewhere within the app.
- * @param {Object} responses The responses in a hash.
- * @return {Number} The ID of the donation that was saved.
+ * Returns an embed representing a donation.
+ * @param {*} donation Sequelize model for donations.
+ * @param {String} title Embed title.
+ * @param {String} color Hex color code.
+ * @returns {RichEmbed} Embed of a donation.
  */
-const saveDonation = async (message, responses, args) => {
-  const storageOpts = args === undefined ? {} : args.storageOpts;
-
-  await storage.init(storageOpts);
-
-  let list = await storage.getItem("donationsList") || {};
-  const id = Date.now();
-  list[id] = responses;
-
-  await storage.setItem("donationsList", list);
-
-  const embed = new RichEmbed()
-    .setColor("#0486f7")
-    .setTitle("Donation Responses")
-    .addField("IGN", `${responses.ign} ${(responses.anonymous ? "(anonymous)" : "")}`)
-    .addField("Platform", responses.platform)
-    .addField("Items", responses.items)
-    .addField("Anonymous?", `${(responses.anonymous ? "Yes" : "No")}`)
-    .addField("Availability", responses.availability)
-    .addField("Restrictions", responses.restrictions)
-    .addField("Notes", responses.notes)
-    .addField("Submitter", `${responses.tag} (ID:${responses.userId})`);
-
-  message.channel.send({ embed });
-
-  return id;
-};
+const toEmbed = (donation, title, color) => {
+  return new RichEmbed()
+    .setTitle(title)
+    .setColor(color)
+    .addField('IGN', donation.ign)
+    .addField('Platform', donation.platform)
+    .addField('Items', donation.items)
+    .addField('Anonymous', donation.anonymous ? "Yes" : "No")
+    .addField('Availability', donation.availability)
+    .addField('Restrictions', donation.restrictions)
+    .addField('Notes', donation.notes)
+}
 
 /**
- * 
- * @param {Client} client A Discord.js Client object.
- * @param {Message} message A Discord.js Message object.
- * @param {Object} responses An object representing a donation entry.
- * @param {Number} id The ID for the donation entry.
+ * Exported function.
  */
-const sendNotification = async (client, message, responses, id, args) => {
-  const storageOpts = args === undefined ? {} : args.storageOpts;
-
-  await storage.init(storageOpts);
-
-  const donationNotificationChannelId = await storage.getItem("donationNotificationChannelId");
-  const donationNotificationChannel = client.channels.get(donationNotificationChannelId);
-
-  if (donationNotificationChannel === undefined) {
-    return message.channel.send(`No notification channel set. New donation created under ID "${id}"`);
+exports.run = async (client, message, args) => {
+  const responses = {
+    ...await getResponses(message, donationQuestions, 'cancel'),
+    discord_tag: message.author.tag,
+    discord_id: message.author.id
   }
 
-  const embed = new RichEmbed()
-    .setColor("#0486f7")
-    .setTitle("New Donation")
-    .addField("Discord Tag", `${responses.tag} (ID:${responses.userId})`)
-    .addField("ID", id.toString())
-    .addField("IGN", `${responses.ign} ${(responses.anonymous ? "(anonymous)" : "")}`)
-    .addField("Platform", responses.platform)
-    .addField("Items", responses.items)
-    .addField("Availability", responses.availability)
-    .addField("Restrictions", responses.restrictions)
-    .addField("Additional Notes", responses.notes);
+  if (!responses) return message.channel.send("Donation process cancelled.")
 
-  return donationNotificationChannel.send({ embed });
-};
+  Donation.create(responses).then(donation => {
+    // Send embed to the invoker's channel
+    message.channel.send(toEmbed(donation, 'Donation Responses', '#0486f7'))
 
-exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
-  const _responses = await gatherAnswers(message, questions, "cancel");
-
-  if(_responses === "cancel") return;
-
-  const responses = tidyResponses(message, _responses);
-  const id = await saveDonation(message, responses, args);
-
-  sendNotification(client, message, responses, id);
-};
+    // Send embed to the notifications channel
+    Setting.findOne({ where: { name: 'donation_channel' } }).then(setting => {
+      if (setting) {
+        return client.channels.get(setting.value).send(toEmbed(donation, 'New Donation', '#0486f7'))
+      } else {
+        return message.channel.send("No notification channel has been set for donations. Contact staff.")
+      }
+    }).catch(e => {
+      return message.channel.send("Database retrieval failed.")
+    })
+  })
+}
 
 exports.conf = {
   permissionLevel: "none"
-};
-
-exports.units = {
-  getResponses: getResponses,
-  tidyResponses: tidyResponses,
-  expandRestrictions: expandRestrictions,
-  saveDonation: saveDonation,
-  sendNotification: sendNotification
-};
+}

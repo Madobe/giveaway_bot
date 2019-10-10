@@ -1,7 +1,6 @@
-const { RichEmbed } = require('discord.js');
-const { checkPerms } = require('../utilities/perms');
+const { RichEmbed } = require('discord.js')
 
-exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
+exports.run = async (client, message, args) => {
   const embed = new RichEmbed()
     .setColor("#0486f7")
     .setTitle("Giveaway Bot Commands")
@@ -29,12 +28,12 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
     .addField(
       "!top",
       "See the current top donators."
-    );
+    )
 
-  message.channel.send({ embed });
+  message.channel.send({ embed })
   
-  if (!checkPerms('GIVEAWAY', message)) {
-    return;
+  if (message.member.roles.get(process.env.GIVEAWAY_ROLE) === undefined) {
+    return
   }
 
   const staffEmbed = new RichEmbed()
@@ -50,7 +49,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
       "Writes to the spreadsheet. Only use when items have been claimed. The id parameter is optional. If the parameter is not provided, it operates on the last entry."
     )
     .addField(
-      "!disqualified user time",
+      "!disqualify user time",
       "Adds the Disqualified role to the mentioned user for the specified length of time."
     )
     .addField(
@@ -74,9 +73,9 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
       "Set winners on the spreadsheet."
     );
 
-  return message.channel.send({ embed: staffEmbed });
+  return message.channel.send({ embed: staffEmbed })
 };
 
 exports.conf = {
   permissionLevel: "none"
-};
+}

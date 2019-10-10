@@ -1,28 +1,17 @@
-const Model = require('./model.js');
+'use strict';
 
-class Donation extends Model {
-  constructor(attributes) {
-    super({
-      ign: 'string',
-      platform: 'string',
-      items: 'array',
-      anonymous: 'boolean',
-      restrictions: 'array',
-      notes: 'string'
-    }, {
-      items: (x) => { return x.join(', '); },
-      platform: (x) => { return x.toUpperCase(); },
-      anonymous: (x) => { return x ? "Yes" : "No"; },
-      restrictions: (x) => { return x.join(', '); }
-    });
+module.exports = (sequelize, DataTypes) => {
+  var Donation = sequelize.define('Donation', {
+    ign: { type: DataTypes.STRING, allowNull: false },
+    platform: { type: DataTypes.STRING, allowNull: false },
+    items: { type: DataTypes.STRING, allowNull: false },
+    anonymous: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    availability: { type: DataTypes.STRING, allowNull: false, defaultValue: 'N/A' },
+    restrictions: { type: DataTypes.STRING, allowNull: false, defaultValue: 'none' },
+    notes: { type: DataTypes.STRING, allowNull: false, defaultValue: 'N/A' },
+    discord_tag: { type: DataTypes.STRING, allowNull: false },
+    discord_id: { type: DataTypes.STRING, allowNull: false }
+  });
 
-    this.ign = attributes.ign || "";
-    this.platform = attributes.platform || "";
-    this.items = attributes.items || [];
-    this.anonymous = attributes.anonymous || false;
-    this.restrictions = attributes.restrictions || [];
-    this.notes = attributes.notes || "";
-  }
-}
-
-module.exports = Donation;
+  return Donation;
+};

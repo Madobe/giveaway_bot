@@ -1,70 +1,93 @@
-// Expected format: !wonby row | tags | igns
-const GSheets = require("../models/gsheets");
-const gsheet = new GSheets();
+/*
+ * Fills in who won on a row.
+ */
+'use strict'
+
+const { flow, head, last, map, nth, split, trim } = require('lodash/fp')
+const { RichEmbed } = require('discord.js')
+const { findUsers } = require('../utilities/search')
+const { updateRow } = require('../utilities/gsheets')
+const config = require('../config')
 
 /**
- * Gathers all the Discord tags in the message.
- * @param {Message} message A Discord.js Message object.
- * @return {Array<string>} An array of Discord tags.
+ * Pulls out the row number from the message.
+ * @param {string} _ The message contents.
+ * @returns {string} The row number.
  */
-const collectDiscordTags = (message) => {
-  const text = message.content.split("|")[1];
-  const mentions =  message.mentions.users.map((user) => user.tag);
-  const tags = text.split(" ");
-
-  let uniqueTags = {};
-  for(let i = 0; i < mentions.length; i++) {
-    uniqueTags[mentions[i]] = true;
-  }
-  for(let i = 0; i < tags.length; i++) {
-    if(tags[i].indexOf("#") === -1) continue;
-    uniqueTags[tags[i]] = true;
-  }
-
-  return Object.keys(uniqueTags);
-};
+const getRow = flow([
+  split('|'),
+  head,
+  split(' '),
+  nth(1)
+])
 
 /**
- * Gathers all Discord IDs for anybody that had a tag given.
- * @param {Collection<Snowflake, User>} users A Discord.js Collection of User objects indexed by Snowflakes.
- * @param {Array<string>} tags The Discord tags of the winners.
+ * Gets the Discord tags of the people.
  */
-const collectDiscordIds = (users, tags) => {
-  return tags.map(tag => users.find(user => user.tag === tag).id);
-};
+const getTags = client => flow([
+  split(config.general.programmatical_delimiter),
+  nth(1),
+  split(config.general.phrase_delimiter),
+  map(s => trim(s)),
+  findUsers(client),
+  map(u => u.tag)
+])
 
 /**
- * Gathers and splits all the IGNs in the message.
- * @param {Message} message A Discord.js Message object.
- * @return {Array<string>} An array of IGNs.
+ * Gets the Discord IDs of the people.
  */
-const processIGNs = (message) => {
-  const igns = message.content.split("|")[2];
-  const splitIGNs = igns.split(/\s*,\s*/g).map(ign => ign.trim());
-  return splitIGNs;
-};
+const getIDs = client => flow([
+  split(config.general.programmatical_delimiter),
+  nth(1),
+  split(config.general.phrase_delimiter),
+  map(s => trim(s)),
+  findUsers(client),
+  map(u => u.id)
+])
 
-exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
-  const row = message.content.split("|")[0].split(" ")[1];
-  const tags = collectDiscordTags(message);
-  const ids = collectDiscordIds(client.users, tags);
-  const igns = processIGNs(message);
+/**
+ * Gets the IGNs from the message content.
+ * @param {string} _ The message content.
+ * @returns {string[]} The IGNs.
+ */
+const getIGNs = flow([
+  split(config.general.programmatical_delimiter),
+  last,
+  split(config.general.phrase_delimiter),
+  map(s => trim(s))
+])
 
-  gsheet.updateRow(
+/**
+ * The exported function
+ */
+exports.run = async (client, message, args) => {
+  if (args.length < 3) return message.channel.send("This command requires a row number, usernames/tags/IDs, and IGNs as arguments.")
+
+  const row = getRow(message.content) || 0
+  const tags = getTags(client)(message.content)
+  const ids = getIDs(client)(message.content)
+  const igns = getIGNs(message.content)
+
+  if (row.replace(/\D/g, '') !== row) return message.channel.send("Row number must be an integer.")
+  if (tags.length === 0 && ids.length === 0) return message.channel.send("None of the provided search terms for Discord users returned any results.")
+  if (igns.length === 0) return message.channel.send("No IGNs provided.")
+
+  updateRow(
     process.env.TRACKER_SPREADSHEET_ID,
     `O${row}:Q${row}`,
     [[tags.join("\n"), ids.join("\n"), igns.join("\n")]]
-  );
+  )
 
-  message.channel.send("Winners have been updated on the spreadsheet.");
-};
+  return message.channel.send(new RichEmbed()
+    .setTitle('Winners Updated')
+    .setColor('#0486f7')
+    .addField("Row Number", row)
+    .addField("Discord Tags", tags.join(', '))
+    .addField("Discord IDs", ids.join(', '))
+    .addField("In-Game Names", igns.join(', '))
+  )
+}
 
 exports.conf = {
-  permissionLevel: "Giveaway"
-};
-
-exports.units = {
-  collectDiscordTags: collectDiscordTags,
-  collectDiscordIds: collectDiscordIds,
-  processIGNs: processIGNs
-};
+  permissionLevel: 'giveaway'
+}
