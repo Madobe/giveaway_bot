@@ -26,6 +26,7 @@ module.exports = {
       // 0 0 0 * * 0 is midnight every week on Sunday
       crontime: '0 0 0 * * 0',
       channel_id: '521269391510339584',
+      // Message IDs that aren't deleted in the purge
       ignore_ids: [
         '521269534511071242'
       ]
@@ -58,6 +59,7 @@ module.exports = {
       // 0 0 0 * * 0 is midnight every week on Sunday
       crontime: '0 0 0 * * 0',
       channel_id: '489712298114547713',
+      // Message IDs that aren't deleted in the purge
       ignore_ids: [
         '517792618801790997'
       ]
