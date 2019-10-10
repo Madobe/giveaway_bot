@@ -15,7 +15,7 @@ const {
 } = require('lodash/fp')
 const { RichEmbed } = require('discord.js')
 const CronJob = require('cron').CronJob
-const config = require('../config')
+const config = require('../config')[process.env.NODE_ENV]
 const db = require('../models')
 const findUsers = require('../utilities/search').findUsers
 const parseTime = require('../utilities/timer').parseTime

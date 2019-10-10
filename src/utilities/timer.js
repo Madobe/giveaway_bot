@@ -2,6 +2,7 @@ const CronJob = require('cron').CronJob
 const { curry, drop, flow, head } = require('lodash/fp')
 const db = require('../models')
 const { Op } = require('sequelize')
+const config = require('../config')[process.env.NODE_ENV].clean_channel
 
 /**
  * Takes a time string and turns it into the equivalent in milliseconds.
@@ -49,10 +50,11 @@ const loadTimers = (client) => {
     })
   ])
 
-  const cleanChannel = timer => {
-    return client.channels.get(timer.channelId).fetchMessages().then(messages => makeJob(timer => {
-      const messagesToDelete = messages.filter(m => !timer.ignoreIds.includes(m.id))
-      timer.channel.bulkDelete(messagesToDelete)
+  const channelToClean = client.channels.get(config.channel_id)
+  const cleanChannel = () => {
+    return new CronJob(config.crontime, channelToClean.fetchMessages().then(messages => {
+      const messagesToDelete = messages.filter(m => !config.ignore_ids.includes(m.id))
+      channelToClean.bulkDelete(messagesToDelete)
     }))
   }
 
@@ -60,7 +62,6 @@ const loadTimers = (client) => {
   return [
     { model: db.MessageTimer, method: sendMessage },
     { model: db.RemoveRoleTimer, method: removeRole },
-    { model: db.CleanChannelTimer, method: cleanChannel }
   ].map(type => {
     return type.model.findAll({
       where: {
@@ -69,7 +70,10 @@ const loadTimers = (client) => {
         }
       }
     }).then(records => {
-      return records.map(record => type.method(record.dataValues))
+      return [
+        ...records.map(record => type.method(record.dataValues)),
+        cleanChannel()
+      ]
     })
   })
 }

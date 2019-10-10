@@ -1,5 +1,5 @@
-const Promise = require("promise")
 const { google } = require("googleapis")
+// @ts-ignore
 const credentials = require("../config/credentials")
 
 const scopes = ["https://www.googleapis.com/auth/spreadsheets"]

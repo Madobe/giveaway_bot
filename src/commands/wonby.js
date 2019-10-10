@@ -7,7 +7,7 @@ const { flow, head, last, map, nth, split, trim } = require('lodash/fp')
 const { RichEmbed } = require('discord.js')
 const { findUsers } = require('../utilities/search')
 const { updateRow } = require('../utilities/gsheets')
-const config = require('../config')
+const config = require('../config')[process.env.NODE_ENV]
 
 /**
  * Pulls out the row number from the message.

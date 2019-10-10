@@ -8,7 +8,7 @@ const { add, drop, flow, head, join } = require('lodash/fp')
 const CronJob = require('cron').CronJob
 const MessageTimer = require('../models').MessageTimer
 const parseTime = require('../utilities/timer').parseTime
-const config = require('../config')
+const config = require('../config')[process.env.NODE_ENV]
 const locale = config.formats.date.locale
 const options = config.formats.date.options
 
