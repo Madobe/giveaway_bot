@@ -9,3 +9,13 @@ v1.0.1
 -Changed the maximum row value from 999 to unspecified to prevent a future problem.
 -Removed anonymous tracking sheet updating because it's obsolete.
 -Changed the filler values for restrictions and notes from blanks to N/A to accommodate the new embed usage.
+
+v2.0.0
+-Reworked the bot under the functional programming paradigm. Most operations are now executed in an assembly line format to get the final result. Intermediate values are no longer mutated from the original.
+-File structure changed to isolate scripts to src.
+-Custom timer system scrapped in favor of Cron Jobs (npm cron package). Minimum time set at 5 minutes to prevent problems with the technical limitations of the package (because it resolves a little slower, it can cause the time to load into the past instead).
+-NoSQL storage system Node Persist has been removed in favor of SQLite3. Bindings are made via the Sequelize library.
+-Consolidated all settings into a single function.
+-Added a configuration file for more generalized behaviour changes. Added environmental configurations.
+-Permissions system now uses bit flags.
+-Documentation in standard JSDoc form has been added to files.

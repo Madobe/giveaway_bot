@@ -1,7 +1,9 @@
 # Project specific
-credentials.json
+src/config/credentials.json
+db/donations.js
 .node-persist/
 .vscode/
+*.sqlite
 
 # Mac
 *.swp
