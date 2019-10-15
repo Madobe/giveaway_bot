@@ -39,7 +39,7 @@ exports.run = async (client, message, args) => {
     discord_id: message.author.id
   }
 
-  if (!responses) return message.channel.send("Donation process cancelled.")
+  if (!responses.notes) return message.channel.send("Donation process cancelled.")
 
   Donation.create(responses).then(donation => {
     // Send embed to the invoker's channel
