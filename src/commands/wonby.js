@@ -74,6 +74,13 @@ exports.run = async (client, message, args) => {
 
   updateRow(
     process.env.TRACKER_SPREADSHEET_ID,
+    `D${row}:E${row}`,
+    // @ts-ignore
+    [[true, true]]
+  )
+
+  updateRow(
+    process.env.TRACKER_SPREADSHEET_ID,
     `O${row}:Q${row}`,
     [[tags.join("\n"), ids.join("\n"), igns.join("\n")]]
   )
