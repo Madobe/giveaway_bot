@@ -52,7 +52,7 @@ const loadTimers = (client) => {
 
   const channelToClean = client.channels.get(config.channel_id)
   const cleanChannel = () => {
-    return new CronJob(config.crontime, channelToClean.fetchMessages().then(messages => {
+    return new CronJob(config.crontime, () => channelToClean.fetchMessages().then(messages => {
       const messagesToDelete = messages.filter(m => !config.ignore_ids.includes(m.id))
       channelToClean.bulkDelete(messagesToDelete)
     }))

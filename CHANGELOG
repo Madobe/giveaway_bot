@@ -1,3 +1,6 @@
+v2.0.3
+-Stop channel cleaning timer from evaluating the callback during job creation.
+
 v2.0.2
 -Fix User searching so that mentions are merged into the resultant array.
 
