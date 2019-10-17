@@ -5,7 +5,7 @@
 
 const { flow, head, last, map, nth, split, trim } = require('lodash/fp')
 const { RichEmbed } = require('discord.js')
-const { findUsers } = require('../utilities/search')
+const { findMessageUsers } = require('../utilities/search')
 const { updateRow } = require('../utilities/gsheets')
 const config = require('../config')[process.env.NODE_ENV]
 
@@ -24,24 +24,26 @@ const getRow = flow([
 /**
  * Gets the Discord tags of the people.
  */
-const getTags = client => flow([
+const getTags = (client, message) => flow([
   split(config.general.programmatical_delimiter),
   nth(1),
   split(config.general.phrase_delimiter),
   map(s => trim(s)),
-  findUsers(client),
+  // @ts-ignore
+  findMessageUsers(client, message),
   map(u => u.tag)
 ])
 
 /**
  * Gets the Discord IDs of the people.
  */
-const getIDs = client => flow([
+const getIDs = (client, message) => flow([
   split(config.general.programmatical_delimiter),
   nth(1),
   split(config.general.phrase_delimiter),
   map(s => trim(s)),
-  findUsers(client),
+  // @ts-ignore
+  findMessageUsers(client, message),
   map(u => u.id)
 ])
 
@@ -64,8 +66,8 @@ exports.run = async (client, message, args) => {
   if (args.length < 3) return message.channel.send("This command requires a row number, usernames/tags/IDs, and IGNs as arguments.")
 
   const row = getRow(message.content) || 0
-  const tags = getTags(client)(message.content)
-  const ids = getIDs(client)(message.content)
+  const tags = getTags(client, message)(message.content)
+  const ids = getIDs(client, message)(message.content)
   const igns = getIGNs(message.content)
 
   if (row.replace(/\D/g, '') !== row) return message.channel.send("Row number must be an integer.")

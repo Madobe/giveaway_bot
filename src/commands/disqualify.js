@@ -17,8 +17,8 @@ const { RichEmbed } = require('discord.js')
 const CronJob = require('cron').CronJob
 const config = require('../config')[process.env.NODE_ENV]
 const db = require('../models')
-const findUsers = require('../utilities/search').findUsers
-const parseTime = require('../utilities/timer').parseTime
+const { findMessageUsers } = require('../utilities/search')
+const { parseTime } = require('../utilities/timer')
 
 /**
  * Custom parsing of arguments passed to the command, unique to this command. Grabs everything
@@ -98,7 +98,7 @@ exports.run = async (client, message, args) => {
   const needles = splitArgs(message.content)
   const members = [
     ...message.mentions.users.array(),
-    ...findUsers(client, needles)
+    ...findMessageUsers(client, message, needles)
   ].map(u => message.guild.member(u))
   const newDate = new Date(getTimerTime(args))
 

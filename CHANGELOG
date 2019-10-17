@@ -1,3 +1,6 @@
+v2.0.2
+-Fix User searching so that mentions are merged into the resultant array.
+
 v2.0.1
 -!wonby now fills in TRUE for the Started and Ended columns on the spreadsheet.
 

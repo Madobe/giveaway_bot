@@ -2,7 +2,7 @@
  * Provides functions which can search with different inputs (eg. display name or tag). Only does
  * exact matches.
  */
-const { curry, flow, head, drop, filter } = require('lodash/fp')
+const { compact, concat, curry, flow, head, drop } = require('lodash/fp')
 
 /**
  * Gets users from the input given.
@@ -22,6 +22,21 @@ const findUsers = curry((client, needles, results = []) => {
   }
 })
 
+/**
+ * Gets users from the input given and combines them with mentions on the Message object.
+ * @param {*} client Discord.js Client.
+ * @param {*} message Discord.js Message.
+ * @param {Array} needles Tags, usernames, or user IDs to search for.
+ */
+const findMessageUsers = curry((client, message, needles) => {
+  return flow([
+    findUsers,
+    concat(message.mentions.users.array()),
+    compact
+  ])(client, needles)
+})
+
 module.exports = {
-  findUsers
+  findUsers,
+  findMessageUsers
 }
