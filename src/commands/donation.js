@@ -20,13 +20,15 @@ const toEmbed = (donation, title, color) => {
   return new RichEmbed()
     .setTitle(title)
     .setColor(color)
+    .addField('Discord Tag', `${donation.discord_tag} (ID: ${donation.discord_id})`)
+    .addField('Donation ID (Database)', donation.id)
     .addField('IGN', donation.ign)
     .addField('Platform', donation.platform)
     .addField('Items', donation.items)
     .addField('Anonymous', donation.anonymous ? "Yes" : "No")
     .addField('Availability', donation.availability)
     .addField('Restrictions', donation.restrictions)
-    .addField('Notes', donation.notes)
+    .addField('Additional Notes', donation.notes)
 }
 
 /**

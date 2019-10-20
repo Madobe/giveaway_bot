@@ -1,3 +1,6 @@
+v2.0.4
+-Add Discord tag and ID, and internal ID on the database to the !donation embed.
+
 v2.0.3
 -Stop channel cleaning timer from evaluating the callback during job creation.
 
