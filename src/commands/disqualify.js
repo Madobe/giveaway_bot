@@ -99,7 +99,9 @@ exports.run = async (client, message, args) => {
   const members = [
     ...message.mentions.users.array(),
     ...findMessageUsers(client, message, needles)
-  ].map(u => message.guild.member(u))
+  ]
+    .map(u => message.guild.member(u))
+    .filter((v, i, a) => a.indexOf(v) === i)
   const newDate = new Date(getTimerTime(args))
 
   db.sequelize.transaction(t => {

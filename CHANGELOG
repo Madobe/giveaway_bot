@@ -1,3 +1,6 @@
+v2.0.5
+-Prevent duplication of members for disqualification if a mention is used.
+
 v2.0.4
 -Add Discord tag and ID, and internal ID on the database to the !donation embed.
 
