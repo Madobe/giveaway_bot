@@ -1,3 +1,6 @@
+v2.0.6
+-Fix perm checking in DMs.
+
 v2.0.5
 -Prevent duplication of members for disqualification if a mention is used.
 
