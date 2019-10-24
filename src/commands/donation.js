@@ -10,6 +10,17 @@ const donationQuestions = require('../resources/donationquestions.json')
 const getResponses = require('../utilities/inputter')
 
 /**
+ * Changes the anonymous property on the responses object from a string to a boolean.
+ * @param {Object} responses An object representing the responses to the donation questions.
+ */
+const anonymousToBoolean = responses => {
+  return {
+    ...responses,
+    anonymous: responses.anonymous.toLowerCase() === 'y' ? true : false
+  }
+}
+
+/**
  * Returns an embed representing a donation.
  * @param {*} donation Sequelize model for donations.
  * @param {String} title Embed title.
@@ -36,7 +47,7 @@ const toEmbed = (donation, title, color) => {
  */
 exports.run = async (client, message, args) => {
   const responses = {
-    ...await getResponses(message, donationQuestions, 'cancel'),
+    ...anonymousToBoolean(await getResponses(message, donationQuestions, 'cancel')),
     discord_tag: message.author.tag,
     discord_id: message.author.id
   }
