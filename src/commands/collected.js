@@ -6,12 +6,14 @@ const {
   drop,
   flow,
   join,
-  split
+  split,
+  trim
 } = require('lodash/fp')
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const format = require("date-fns/format")
 const Donation = require('../models').Donation
 const { insertRow } = require('../utilities/gsheets')
+const config = require('../config')[process.env.NODE_ENV]
 
 /**
  * Formats message.content to remove the other parts of the command.
@@ -31,7 +33,7 @@ const formatNotes = flow([
  * @returns {Array<*>} Row template.
  */
 const getTemplate = (message, donation) => [
-  format(new Date(), "YYYY-MM-DD HH:mm:ss"),               // 0 - Date
+  format(new Date(), "yyyy-MM-dd HH:mm:ss"),               // 0 - Date
   null,                                                    // 1 - Status
   true,                                                    // 2 - Collected?
   false,                                                   // 3 - Started?
@@ -55,9 +57,9 @@ const getTemplate = (message, donation) => [
 /**
  * Returns an embed representing a donation.
  * @param {*} donation Sequelize model for donations.
- * @returns {RichEmbed} Embed of a donation.
+ * @returns {MessageEmbed} Embed of a donation.
  */
-const toEmbed = (message, donation) => new RichEmbed()
+const toEmbed = (message, donation) => new MessageEmbed()
   .setTitle('Rows Added to Spreadsheet')
   .setColor('#0486f7')
   .addField('Donation ID (Database Internal)', donation.id)
@@ -88,7 +90,7 @@ const formRows = (items, template, rows = []) => {
       template,
       [
         ...rows,
-        Object.assign([], template, { 6: items[0] })
+        Object.assign([], template, { 6: trim(items[0]) })
       ]
     )
   }
@@ -102,7 +104,7 @@ exports.run = async (client, message, args) => {
     where: args[0] ? { id: args[0] } : {},
     order: [['id', 'DESC']]
   }).then(donation => {
-    const rows = formRows(split(' ', donation.items), getTemplate(message, donation))
+    const rows = formRows(split(config.general.phrase_delimiter, donation.items), getTemplate(message, donation))
 
     insertRow(
       process.env.TRACKER_SPREADSHEET_ID,

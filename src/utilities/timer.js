@@ -27,8 +27,8 @@ const parseTime = flow([
  */
 const loadTimers = (client) => {
   const getUser = timer => { return { ...timer, user: client.users.get(timer.userId) } }
-  const getGuild = timer => { return { ...timer, guild: client.guilds.get(timer.guildId) } }
-  const getMember = timer => { return { ...timer, member: timer.guild.members.get(timer.memberId) } }
+  const getGuild = timer => { return { ...timer, guild: client.guilds.resolve(timer.guildId) } }
+  const getMember = timer => { return { ...timer, member: timer.guild.members.fetch(timer.memberId) } }
   const makeJob = curry((fn, timer) => new CronJob(new Date(timer.datetime), () => fn(timer)))
 
   // @ts-ignore
@@ -45,12 +45,17 @@ const loadTimers = (client) => {
     getGuild,
     getMember,
     makeJob(timer => {
-      timer.member.removeRole(timer.roleId)
+      try {
+        timer.member.removeRole(timer.roleId)
+      } catch (e) {
+        return timer
+      }
+      
       return timer
     })
   ])
 
-  const channelToClean = client.channels.get(config.channel_id)
+  const channelToClean = client.channels.fetch(config.channel_id)
   const cleanChannel = () => {
     return new CronJob(config.crontime, () => channelToClean.fetchMessages().then(messages => {
       const messagesToDelete = messages.filter(m => !config.ignore_ids.includes(m.id))

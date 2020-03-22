@@ -14,11 +14,11 @@ const calculatePerms = (message) => {
 
   if (message.member === null) return perms
 
-  if (message.member.roles.get(process.env.MODERATOR_ROLE) !== undefined) {
+  if (message.member.roles.cache.get(process.env.MODERATOR_ROLE) !== undefined) {
     perms = perms | PERMS.MODERATOR
   }
 
-  if (message.member.roles.get(process.env.GIVEAWAY_ROLE) !== undefined) {
+  if (message.member.roles.cache.get(process.env.GIVEAWAY_ROLE) !== undefined) {
     perms = perms | PERMS.GIVEAWAY
   }
 

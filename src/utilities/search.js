@@ -16,7 +16,7 @@ const findUsers = curry((client, needles, results = []) => {
   } else {
     const text = head(needles)
     const filter = u => u.tag === text || u.username === text || u.id === text
-    const match = client.users.filter(filter).first()
+    const match = client.users.cache.filter(filter).first()
 
     return findUsers(client, drop(1, needles), [...results, match])
   }

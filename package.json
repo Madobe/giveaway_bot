@@ -1,35 +1,38 @@
 {
-  "name": "giveaway_bot",
-  "version": "1.0.1",
-  "description": "Warframe Giveaway server bot",
-  "main": "src/index.js",
+  "//1": "describes your app and its dependencies",
+  "//2": "https://docs.npmjs.com/files/package.json",
+  "//3": "updating this file will download and update your packages",
+  "name": "hello-express",
+  "version": "0.0.1",
+  "description": "A simple Node app built on Express, instantly up and running.",
+  "author": "Madobe",
+  "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=development node ./src/index.js",
-    "start:production": "NODE_ENV=production node ./src/index.js",
-    "test": "mocha --recursive ./test"
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "date-fns": "^2.9.0",
+    "express": "^4.17.1",
+    "discord.js": "^12.0.2",
+    "googleapis": "^47.0.0",
+    "node-persist": "^3.0.5",
+    "promise": "^8.1.0",
+    "lodash": "^4.17.15",
+    "sqlite3": "^4.1.1",
+    "sequelize": "^5.0.0",
+    "cron": "^1.8.2"
+  },
+  "engines": {
+    "node": "12.x"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com-madobe:Madobe/giveaway_bot.git"
   },
-  "author": "Madobe",
-  "license": "GPL-3.0",
-  "type": "module",
-  "dependencies": {
-    "cron": "^1.7.2",
-    "date-fns": "^1.29.0",
-    "discord.js": "^11.5.1",
-    "googleapis": "^42.0.0",
-    "lodash": "^4.17.15",
-    "objectmodel": "^4.0.3",
-    "promise": "^8.0.2",
-    "sequelize": "^5.19.1",
-    "sqlite3": "^4.1.0"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "chai-string": "^1.5.0",
-    "mocha": "^5.2.0",
-    "nock": "^10.0.2"
-  }
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
 }

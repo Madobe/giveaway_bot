@@ -4,7 +4,7 @@
 'use strict'
 
 const { flow, head, last, map, nth, split, trim } = require('lodash/fp')
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const { findMessageUsers } = require('../utilities/search')
 const { updateRow } = require('../utilities/gsheets')
 const config = require('../config')[process.env.NODE_ENV]
@@ -76,9 +76,9 @@ exports.run = async (client, message, args) => {
 
   updateRow(
     process.env.TRACKER_SPREADSHEET_ID,
-    `D${row}:E${row}`,
+    `D${row}:F${row}`,
     // @ts-ignore
-    [[true, true]]
+    [[true, true, true]]
   )
 
   updateRow(
@@ -87,7 +87,7 @@ exports.run = async (client, message, args) => {
     [[tags.join("\n"), ids.join("\n"), igns.join("\n")]]
   )
 
-  return message.channel.send(new RichEmbed()
+  return message.channel.send(new MessageEmbed()
     .setTitle('Winners Updated')
     .setColor('#0486f7')
     .addField("Row Number", row)

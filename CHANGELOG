@@ -1,3 +1,7 @@
+v2.0.8
+-Use config file in collected.
+-Fill in row F with wonby.
+
 v2.0.7
 -Fix anonymity on donations so it's not always yes.
 
