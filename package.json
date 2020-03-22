@@ -22,6 +22,12 @@
     "sequelize": "^5.0.0",
     "cron": "^1.8.2"
   },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-string": "^1.5.0",
+    "mocha": "^7.1.1",
+    "nock": "^10.0.2"
+  },
   "engines": {
     "node": "12.x"
   },
