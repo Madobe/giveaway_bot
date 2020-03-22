@@ -1,7 +1,7 @@
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 
 exports.run = async (client, message, args) => {
-  const embed = new RichEmbed()
+  const embed = new MessageEmbed()
     .setColor("#0486f7")
     .setTitle("Giveaway Bot Commands")
     .setDescription('Time for any function that uses it is in the form "#[s/m/h/d]" (eg. 30s).')
@@ -36,7 +36,7 @@ exports.run = async (client, message, args) => {
     return
   }
 
-  const staffEmbed = new RichEmbed()
+  const staffEmbed = new MessageEmbed()
     .setColor("#ff471a")
     .setTitle("Giveaway Bot Staff Commands")
     .setDescription("These commands are for staff only. Variables that have ? at the end are optional.")

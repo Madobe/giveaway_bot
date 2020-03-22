@@ -1,7 +1,7 @@
 const chai = require("chai")
 chai.use(require("chai-string"))
 const expect = chai.expect
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const command = require('../../src/commands/help')
 const { Message } = require('../shared/mock_discord')
 
@@ -13,7 +13,7 @@ describe('help', function() {
       roleId: '506311827341443072'
     }), [])
 
-    expect(res.embed instanceof RichEmbed).to.eq(true)
+    expect(res.embed instanceof MessageEmbed).to.eq(true)
   })
 
   it('returns nothing if the member is lacking permissions', async function() {

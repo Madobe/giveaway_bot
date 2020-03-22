@@ -21,7 +21,9 @@ describe("donation", () => {
         anonymous: false,
         availability: "GMT+0",
         restrictions: "none",
-        notes: "N"
+        notes: "N",
+        discord_id: "1234567890",
+        discord_tag: "name#0000"
       }).bind(this).then(donation => {
         expect(donation.ign).to.equal("Name")
         expect(donation.platform).to.equal("PC")
