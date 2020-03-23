@@ -9,7 +9,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node src/index.js",
-    "restart": "killall node && node src/index.js",
+    "restart": "killall node; node src/index.js",
     "test": "mocha --recursive"
   },
   "dependencies": {
