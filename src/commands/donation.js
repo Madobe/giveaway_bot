@@ -2,7 +2,7 @@
  * Asks the command invoker the questions in src/resources/donationquestions.json and collects the
  * responses.
  */
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const Donation = require('../models').Donation
 const Setting = require('../models').Setting
 // @ts-ignore
@@ -25,10 +25,10 @@ const anonymousToBoolean = responses => {
  * @param {*} donation Sequelize model for donations.
  * @param {String} title Embed title.
  * @param {String} color Hex color code.
- * @returns {RichEmbed} Embed of a donation.
+ * @returns {MessageEmbed} Embed of a donation.
  */
 const toEmbed = (donation, title, color) => {
-  return new RichEmbed()
+  return new MessageEmbed()
     .setTitle(title)
     .setColor(color)
     .addField('Discord Tag', `${donation.discord_tag} (ID: ${donation.discord_id})`)

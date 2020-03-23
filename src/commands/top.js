@@ -3,7 +3,7 @@
  */
 'use strict'
 
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const { getValues } = require('../utilities/gsheets')
 
 /**
@@ -13,7 +13,7 @@ exports.run = async (client, message, args) => {
   const rows = await getValues("14t9-54udr_eqaCgq9g1rWhPLHY_E-RxfdhKTXxgCERc", "B2:C11")
   const lines = rows.map((row, i) => `${i + 1}. **${row[0]}** - ${row[1]}p`).join("\n")
 
-  const embed = new RichEmbed()
+  const embed = new MessageEmbed()
     .setColor("#0486f7")
     .setTitle("Donation Leaderboard")
     .setDescription(lines)

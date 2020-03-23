@@ -33,6 +33,7 @@ const formatNotes = flow([
  * @returns {Array<*>} Row template.
  */
 const getTemplate = (message, donation) => [
+  // @ts-ignore
   format(new Date(), "yyyy-MM-dd HH:mm:ss"),               // 0 - Date
   null,                                                    // 1 - Status
   true,                                                    // 2 - Collected?
@@ -104,6 +105,7 @@ exports.run = async (client, message, args) => {
     where: args[0] ? { id: args[0] } : {},
     order: [['id', 'DESC']]
   }).then(donation => {
+    // @ts-ignore
     const rows = formRows(split(config.general.phrase_delimiter, donation.items), getTemplate(message, donation))
 
     insertRow(

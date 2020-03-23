@@ -1,3 +1,9 @@
+v2.1.1
+-Change all RichEmbed references to MessageEmbed.
+
+v2.1.0
+-Change code to reflect update to Discord.js API.
+
 v2.0.8
 -Use config file in collected.
 -Fill in row F with wonby.

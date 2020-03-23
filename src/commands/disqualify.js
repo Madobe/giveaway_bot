@@ -13,7 +13,7 @@ const {
   split,
   trim,
 } = require('lodash/fp')
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const CronJob = require('cron').CronJob
 const config = require('../config')[process.env.NODE_ENV]
 const db = require('../models')
@@ -70,13 +70,13 @@ const getTimerTime = flow([
  * Forms an embed detailing the operation.
  * @param {Date} date Time that the timer will trigger.
  * @param {Array<*>} members The members that have had the role added to them.
- * @return {RichEmbed} The embed.
+ * @return {MessageEmbed} The embed.
  */
 const toEmbed = (date, members) => {
   const locale = config.formats.date.locale
   const options = config.formats.date.options
 
-  return new RichEmbed()
+  return new MessageEmbed()
     .setTitle("New Disqualification")
     .setColor("#721c24")
     .addField("Current Time", new Date().toLocaleString(locale, options))
