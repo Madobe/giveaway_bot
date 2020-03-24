@@ -61,7 +61,7 @@ exports.run = async (client, message, args) => {
     // Send embed to the notifications channel
     Setting.findOne({ where: { name: 'donation_channel' } }).then(setting => {
       if (setting) {
-        return client.channels.get(setting.value).send(toEmbed(donation, 'New Donation', '#0486f7'))
+        return client.channels.fetch(setting.value).send(toEmbed(donation, 'New Donation', '#0486f7'))
       } else {
         return message.channel.send("No notification channel has been set for donations. Contact staff.")
       }

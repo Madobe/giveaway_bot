@@ -26,7 +26,7 @@ const parseTime = flow([
  * @param {*} client Discord.js Client.
  */
 const loadTimers = (client) => {
-  const getUser = timer => { return { ...timer, user: client.users.get(timer.userId) } }
+  const getUser = timer => { return { ...timer, user: client.users.fetch(timer.userId) } }
   const getGuild = timer => { return { ...timer, guild: client.guilds.resolve(timer.guildId) } }
   const getMember = timer => { return { ...timer, member: timer.guild.members.fetch(timer.memberId) } }
   const makeJob = curry((fn, timer) => new CronJob(new Date(timer.datetime), () => fn(timer)))
