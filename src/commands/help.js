@@ -32,7 +32,7 @@ exports.run = async (client, message, args) => {
 
   message.channel.send({ embed })
   
-  if (message.member.roles.get(process.env.GIVEAWAY_ROLE) === undefined) {
+  if (message.member.roles.cache.get(process.env.GIVEAWAY_ROLE) === undefined) {
     return
   }
 
