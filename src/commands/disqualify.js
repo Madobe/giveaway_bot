@@ -118,7 +118,7 @@ exports.run = async (client, message, args) => {
     client.timers = [
       ...client.timers,
       ...members.map(member => {
-        member.addRole(roleId.value)
+        member.roles.add(roleId.value)
         return new CronJob(newDate, () => member.removeRole(roleId.value))
       })
     ]
