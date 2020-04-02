@@ -24,10 +24,12 @@ const Message = (args) => {
 const Member = (args) => {
   return {
     id: args.id,
-    roles: Collection({
-      id: args.roleId,
-      data: [{ roleId: args.roleId }]
-    })
+    roles: {
+      cache: Collection({
+        id: args.roleId,
+        data: [{ roleId: args.roleId }]
+      })
+    }
   }
 }
 
