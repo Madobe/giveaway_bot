@@ -13,7 +13,7 @@
   },
   {
     "name": "items",
-    "question": "What items would you like to donate? Please separate them with commas, and if donating duplicates type \"x[number]\" with it. Eg: Ember Prime Set x5. Duplicates will generally be put in separate giveaways unless specified otherwise.."
+    "question": "What items would you like to donate? Please separate them with commas, and if donating duplicates type \"x[number]\" with it. Eg: Ember Prime Set x5. Duplicates will generally be put in separate giveaways unless specified otherwise."
   },
   {
     "name": "anonymous",

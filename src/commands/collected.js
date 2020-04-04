@@ -75,6 +75,30 @@ const toEmbed = (message, donation) => new MessageEmbed()
   .addField('Collector', `${message.author.tag} (ID:${message.author.id})`)
 
 /**
+ * Splits an item entry into multiple rows if that item entry contains an item name, a number, and 
+ * the letter x directly before or after the number. The only exception to this is platinum.
+ * @param {String} item The item name. May contain amounts (eg. Item x2).
+ * @param {Array<*>} template An array of values for the spreadsheet. Only item names change in 
+ * this.
+ * @returns {Array<Array<*>>} A 2D array of rows.
+ */
+const splitMultiples = (item, template) => {
+  const platRegex = /\b(?:plat|platinum)\b/i
+  const amountRegex = /\b(?:x([0-9]+))|(?:([0-9]+)x)\b/i
+
+  if (!platRegex.test(item) && amountRegex.test(item)) {
+    const [_, a, b] = amountRegex.exec(item)
+    const amount = parseInt(a || b)
+    const itemName = trim(item.replace(amountRegex, ''))
+    const row = Object.assign([], template, { 6: itemName })
+
+    return Array.from({ length: amount }, (x, i) => row)
+  } else {
+    return [Object.assign([], template, { 6: trim(item) })]
+  }
+}
+
+/**
  * Replaces the item column in the template rows with each item and gathers the results.
  * @param {Array<String>} items An array of item names. The only variable across rows.
  * @param {Array<*>} template An array of values for the spreadsheet. Only item names change in
@@ -91,7 +115,7 @@ const formRows = (items, template, rows = []) => {
       template,
       [
         ...rows,
-        Object.assign([], template, { 6: trim(items[0]) })
+        ...splitMultiples(items[0], template)
       ]
     )
   }
