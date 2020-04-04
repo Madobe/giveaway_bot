@@ -6,6 +6,7 @@ const {
   drop,
   flow,
   join,
+  map,
   split,
   trim
 } = require('lodash/fp')
@@ -15,6 +16,24 @@ const Donation = require('../models').Donation
 const { insertRow } = require('../utilities/gsheets')
 const { toTitleCase } = require('../utilities/string-ops')
 const config = require('../config')[process.env.NODE_ENV]
+
+/**
+ * Expands restrictions to their full form.
+ * @param {String} s The restrictions in collapsed form.
+ * @returns {String} All the expanded restrictions as a comma-delimited string.
+ */
+const expansions = {
+  "beginner": "Beginner - Up to 100h in-game time",
+  "novice": "Novice - Less than 250h in-game time",
+  "unowned": "Unowned - Must not already have a copy of this item (In the case of frames, weapons, and companions: must have never owned)"
+}
+
+const formatRestrictions = flow([
+  split(','),
+  map(s => trim(s)),
+  map(s => expansions[s.toLowerCase()] ? expansions[s.toLowerCase()] : s),
+  join(', ')
+])
 
 /**
  * Formats message.content to remove the other parts of the command.
@@ -44,7 +63,7 @@ const getTemplate = (message, donation) => [
   "ITEM HERE",                                             // 6 - Item
   "",                                                      // 7 - Plat Value (Estimated)
   donation.platform,                                       // 8 - Platform
-  donation.restrictions,                                   // 9 - Restrictions
+  formatRestrictions(donation.restrictions),               // 9 - Restrictions
   donation.anonymous ? "anonymous" : donation.discord_tag, // 10 - Donated By (Discord Tag)
   donation.anonymous ? "anonymous" : donation.discord_id,  // 11 - Donated By (Discord ID)
   donation.ign,                                            // 12 - Donated By (IGN)
@@ -71,7 +90,7 @@ const toEmbed = (message, donation) => new MessageEmbed()
   .addField('Items', donation.items)
   .addField('Anonymous', donation.anonymous ? "Yes" : "No")
   .addField('Availability', donation.availability)
-  .addField('Restrictions', donation.restrictions)
+  .addField('Restrictions', formatRestrictions(donation.restrictions))
   .addField('Notes', donation.notes === "N" ? "N/A" : donation.notes)
   .addField('Collector', `${message.author.tag} (ID:${message.author.id})`)
 
