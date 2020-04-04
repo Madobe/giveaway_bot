@@ -2,12 +2,12 @@
  * Asks the command invoker the questions in src/resources/donationquestions.json and collects the
  * responses.
  */
-const { MessageEmbed } = require('discord.js')
 const Donation = require('../models').Donation
 const Setting = require('../models').Setting
 // @ts-ignore
 const donationQuestions = require('../resources/donationquestions.json')
 const getResponses = require('../utilities/inputter')
+const { DONATION_EMBED_TYPE, toEmbed } = require('../utilities/format-donation')
 
 /**
  * Changes the anonymous property on the responses object from a string to a boolean.
@@ -18,28 +18,6 @@ const anonymousToBoolean = responses => {
     ...responses,
     anonymous: responses.anonymous.toLowerCase() === 'y' ? true : false
   }
-}
-
-/**
- * Returns an embed representing a donation.
- * @param {*} donation Sequelize model for donations.
- * @param {String} title Embed title.
- * @param {String} color Hex color code.
- * @returns {MessageEmbed} Embed of a donation.
- */
-const toEmbed = (donation, title, color) => {
-  return new MessageEmbed()
-    .setTitle(title)
-    .setColor(color)
-    .addField('Discord Tag', `${donation.discord_tag} (ID: ${donation.discord_id})`)
-    .addField('Donation ID (Database)', donation.id)
-    .addField('IGN', donation.ign)
-    .addField('Platform', donation.platform)
-    .addField('Items', donation.items)
-    .addField('Anonymous', donation.anonymous ? "Yes" : "No")
-    .addField('Availability', donation.availability)
-    .addField('Restrictions', donation.restrictions)
-    .addField('Additional Notes', donation.notes)
 }
 
 /**
@@ -56,12 +34,12 @@ exports.run = async (client, message, args) => {
 
   Donation.create(responses).then(donation => {
     // Send embed to the invoker's channel
-    message.channel.send(toEmbed(donation, 'Donation Responses', '#0486f7'))
+    message.channel.send(toEmbed(message, donation, DONATION_EMBED_TYPE.DONATE_NOTIFICATION, '#0486f7'))
 
     // Send embed to the notifications channel
     Setting.findOne({ where: { name: 'donation_channel' } }).then(setting => {
       if (setting) {
-        return client.channels.fetch(setting.value).then(channel => channel.send(toEmbed(donation, 'New Donation', '#0486f7')))
+        return client.channels.fetch(setting.value).then(channel => channel.send(toEmbed(message, donation, DONATION_EMBED_TYPE.DONATE, '#0486f7')))
       } else {
         return message.channel.send("No notification channel has been set for donations. Contact staff.")
       }
