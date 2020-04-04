@@ -13,6 +13,7 @@ const { MessageEmbed } = require('discord.js')
 const format = require("date-fns/format")
 const Donation = require('../models').Donation
 const { insertRow } = require('../utilities/gsheets')
+const { toTitleCase } = require('../utilities/string-ops')
 const config = require('../config')[process.env.NODE_ENV]
 
 /**
@@ -51,7 +52,7 @@ const getTemplate = (message, donation) => [
   "",                                                      // 14 - Won By
   "",                                                      // 15 - Won By (Discord ID)
   "",                                                      // 16 - Won By (IGN)
-  donation.notes === "N" ? "N/A" : donation.notes,         // 17 - Donor Notes
+  donation.notes === "N" ? "" : donation.notes,         // 17 - Donor Notes
   formatNotes(message.content)                             // 18 - Staff Notes
 ]
 
@@ -89,12 +90,12 @@ const splitMultiples = (item, template) => {
   if (!platRegex.test(item) && amountRegex.test(item)) {
     const [_, a, b] = amountRegex.exec(item)
     const amount = parseInt(a || b)
-    const itemName = trim(item.replace(amountRegex, ''))
+    const itemName = toTitleCase(trim(item.replace(amountRegex, '')))
     const row = Object.assign([], template, { 6: itemName })
 
     return Array.from({ length: amount }, (x, i) => row)
   } else {
-    return [Object.assign([], template, { 6: trim(item) })]
+    return [Object.assign([], template, { 6: toTitleCase(trim(item)) })]
   }
 }
 
