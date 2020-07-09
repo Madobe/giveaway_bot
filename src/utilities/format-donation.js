@@ -28,7 +28,7 @@ const DONATION_EMBED_TYPE = {
  * @returns {String} All the expanded restrictions as a comma-delimited string.
  */
 const expansions = {
-  "beginner": "Beginner - Up to 100h in-game time",
+  "beginner": "Beginner - Less than 100h in-game time",
   "novice": "Novice - Less than 250h in-game time",
   "unowned": "Unowned - Must not already have a copy of this item (In the case of frames, weapons, and companions: must have never owned)"
 }

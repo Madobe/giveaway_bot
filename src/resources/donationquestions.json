@@ -27,7 +27,7 @@
     "name": "restrictions",
     "question": [
       "Should there be any restrictions placed on who can win the items you have donated? You can set it to the following or a custom restriction:",
-      "Beginner - Up to 100h in-game time",
+      "Beginner - Less than 100h in-game time",
       "Novice - Less than 250h in-game time",
       "Unowned - Must not already have a copy of this item (In the case of frames, weapons, and companions: must have never owned)",
       "Typing one of the above will automatically expand the restriction (ie. `Beginner` becomes `Beginner - Up to 100h in-game time.`).",
