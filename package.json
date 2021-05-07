@@ -19,7 +19,7 @@
     "googleapis": "^47.0.0",
     "node-persist": "^3.0.5",
     "promise": "^8.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "sqlite3": "^4.1.1",
     "sequelize": "^5.0.0",
     "cron": "^1.8.2"
