@@ -37,7 +37,7 @@ const formatRestrictions = flow([
   split(','),
   map(s => trim(s)),
   map(s => expansions[s.toLowerCase()] ? expansions[s.toLowerCase()] : s),
-  join(', ')
+  join('\n')
 ])
 
 /**
